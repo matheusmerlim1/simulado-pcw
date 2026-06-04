@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulado — Programação de Clientes Web</title>
+<link rel="stylesheet" href="./css/styles.css">
+<script type="module" src="./js/main.js"></script>
+</head>
+<body>
+<header>
+  <div class="logo"><span class="logo-dot"></span>CEFET/RJ · PCW · Simulado</div>
+  <div id="live-score">Acertos: <strong id="ls-val">0/0</strong></div>
+</header>
+<main>
+
+<!-- HOME -->
+<section id="home">
+  <div class="home-header">
+    <div class="eyebrow">Simulado Interativo</div>
+    <h1>Programação de<br><span class="hl">Clientes Web</span></h1>
+    <p class="home-sub">Questões de múltipla escolha, V/F e escrita de código — baseadas nos slides e provas da disciplina.</p>
+  </div>
+
+  <div class="sec-title">Modo de Prova</div>
+  <div class="prova-grid">
+    <div class="prova-card" data-prova="p1">
+      <div class="prova-tag">Prova 1</div>
+      <div class="prova-name">P1</div>
+      <div class="prova-desc">Revisão HTML/CSS, ES, tipos, escopo, arrays, JSON, ESM, DOM, eventos, storage, arrow, operadores, POO e exceções.</div>
+      <div class="prova-count" id="cnt-p1">—</div>
+    </div>
+    <div class="prova-card" data-prova="p2">
+      <div class="prova-tag">Prova 2</div>
+      <div class="prova-name">P2</div>
+      <div class="prova-desc">Assincronicidade e promessas, fetch/AJAX, async/await, REST e os padrões MVC e MVP.</div>
+      <div class="prova-count" id="cnt-p2">—</div>
+    </div>
+    <div class="prova-card" data-prova="all">
+      <div class="prova-tag">Prova Final</div>
+      <div class="prova-name">PF</div>
+      <div class="prova-desc">Todo o conteúdo da disciplina — P1 e P2 juntas.</div>
+      <div class="prova-count" id="cnt-pf">—</div>
+    </div>
+  </div>
+  <div class="prova-hint">Clique em <strong>P1</strong>, <strong>P2</strong> ou <strong>PF</strong> para selecionar o conteúdo daquela prova. Depois ajuste a <strong>dificuldade</strong> e a <strong>quantidade</strong> se quiser e clique em <strong>Iniciar Simulado</strong>.</div>
+
+  <div class="sec-title">Dificuldade</div>
+  <div class="diff-grid">
+    <div class="diff-card easy active" data-diff="easy">
+      <div class="diff-check">✓</div><div class="diff-icon">🟢</div>
+      <div class="diff-name">Fácil</div>
+      <div class="diff-desc">Definições, reconhecimento de sintaxe e conceitos diretos.</div>
+      <div class="diff-count" id="cnt-easy">—</div>
+    </div>
+    <div class="diff-card medium active" data-diff="medium">
+      <div class="diff-check">✓</div><div class="diff-icon">🟡</div>
+      <div class="diff-name">Médio</div>
+      <div class="diff-desc">Interpretação de código, diferenças entre APIs e casos de uso.</div>
+      <div class="diff-count" id="cnt-medium">—</div>
+    </div>
+    <div class="diff-card hard active" data-diff="hard">
+      <div class="diff-check">✓</div><div class="diff-icon">🔴</div>
+      <div class="diff-name">Difícil</div>
+      <div class="diff-desc">Pegadinhas, análise de bugs e escrita de código do zero.</div>
+      <div class="diff-count" id="cnt-hard">—</div>
+    </div>
+  </div>
+
+  <div class="sec-title" style="margin-top:28px">Tópicos</div>
+  <div class="topics-wrap" id="topics-grid"></div>
+
+  <div class="sec-title" style="margin-top:28px">Tipo de Questão</div>
+  <div class="type-grid">
+    <div class="type-card mc active" data-type="mc">
+      <div class="type-check">✓</div><div class="type-icon">🔤</div>
+      <div class="type-name">Múltipla Escolha</div>
+      <div class="type-desc">Escolha a alternativa correta entre 4 opções.</div>
+      <div class="type-count" id="cnt-mc">—</div>
+    </div>
+    <div class="type-card tf active" data-type="tf">
+      <div class="type-check">✓</div><div class="type-icon">✅</div>
+      <div class="type-name">Verdadeiro / Falso</div>
+      <div class="type-desc">Avalie cada afirmação como verdadeira ou falsa.</div>
+      <div class="type-count" id="cnt-tf">—</div>
+    </div>
+    <div class="type-card code active" data-type="code">
+      <div class="type-check">✓</div><div class="type-icon">✎</div>
+      <div class="type-name">Escreva o Código</div>
+      <div class="type-desc">Digite o código e verifique se os elementos obrigatórios estão presentes.</div>
+      <div class="type-count" id="cnt-code">—</div>
+    </div>
+  </div>
+
+  <div class="sec-title" style="margin-top:28px">Configuração</div>
+  <div class="config-row">
+    <span class="config-label">Quantidade:</span>
+    <select class="config-select" id="qty-select">
+      <option value="5">5 questões</option>
+      <option value="10" selected>10 questões</option>
+      <option value="15">15 questões</option>
+      <option value="20">20 questões</option>
+      <option value="999">Todas</option>
+    </select>
+  </div>
+  <button class="btn-start" id="btn-start">Iniciar Simulado →</button>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <button class="btn-voltar" id="btn-quiz-home">← Página inicial</button>
+  <div class="quiz-top">
+    <span class="q-counter" id="q-counter">Questão 1/10</span>
+    <div class="q-tags">
+      <span class="tag tag-topic" id="q-tag-topic"></span>
+      <span class="tag" id="q-tag-diff"></span>
+      <span class="tag tag-code" id="q-tag-code" style="display:none">✎ Código</span>
+    </div>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+  <div class="q-card">
+    <div class="q-stripe" id="q-stripe"></div>
+    <div class="q-body">
+      <div id="q-type-badge" class="q-type-badge" style="display:none">✎ Escreva o código</div>
+      <div class="q-text" id="q-text"></div>
+      <pre class="q-code" id="q-code" style="display:none"></pre>
+      <ul class="options-list" id="options-list"></ul>
+      <div class="tf-list" id="tf-list" style="display:none"></div>
+      <div class="tf-progress" id="tf-progress" style="display:none"></div>
+      <div id="code-input-area" style="display:none">
+        <div class="code-input-label">Sua resposta:</div>
+        <textarea class="code-input" id="code-textarea" spellcheck="false" placeholder="Digite seu código aqui..."></textarea>
+        <div class="code-hint">Tab insere 2 espaços · Ctrl+Enter para verificar</div>
+        <div class="diff-tokens" id="diff-tokens"></div>
+        <button class="btn-check" id="btn-check">Verificar ↵</button>
+      </div>
+      <div class="feedback" id="feedback">
+        <div class="fb-head" id="fb-head"></div>
+        <div class="fb-body" id="fb-body"></div>
+      </div>
+    </div>
+  </div>
+  <button class="btn-next" id="btn-next">Próxima questão →</button>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="res-hero">
+    <div class="res-ring-wrap">
+      <svg class="res-ring-svg" width="150" height="150" viewBox="0 0 150 150">
+        <circle class="res-ring-bg" cx="75" cy="75" r="63"/>
+        <circle class="res-ring-arc" id="ring-arc" cx="75" cy="75" r="63" stroke-dasharray="396" stroke-dashoffset="396"/>
+      </svg>
+      <div class="res-ring-text">
+        <div class="res-pct" id="res-pct">0%</div>
+        <div class="res-frac" id="res-frac">0/0</div>
+      </div>
+    </div>
+    <h2 id="res-title"></h2><p id="res-msg"></p>
+  </div>
+  <div class="diff-breakdown" id="diff-breakdown"></div>
+  <div class="res-table" id="res-table"></div>
+  <div class="res-actions">
+    <button class="btn-ghost" id="btn-home">← Novo Simulado</button>
+    <button class="btn-accent" id="btn-retry">Refazer este</button>
+  </div>
+  <button class="review-toggle">Ver revisão ▾</button>
+  <div id="review-list"></div>
+</section>
+</main>
+</body>
+</html>

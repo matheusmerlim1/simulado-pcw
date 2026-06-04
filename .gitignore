@@ -1,0 +1,18 @@
+# Dependências
+node_modules/
+vendor/
+
+# Credenciais e segredos
+.env
+*.env
+secrets.json
+token.txt
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+.cache/
