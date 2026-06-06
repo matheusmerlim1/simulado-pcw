@@ -2558,4 +2558,1322 @@ options:[
 answer:1,
 exp:"fetch só rejeita a Promise em falha de rede. Respostas 4xx/5xx resolvem normalmente, porém com response.ok = false — por isso o padrão if(!response.ok) throw new Error(...)."},
 
+// ══════════════════════════════════════════════════════════
+// LOTE DISCURSIVO AMPLIADO — questões "escreva o código"
+// fácil / médio / difícil para cada tópico
+// ══════════════════════════════════════════════════════════
+
+// ── TIPOS ──
+{topic:"Tipos",diff:"easy",type:"code",
+text:"Escreva uma expressão que verifique se a variável valor é estritamente igual (mesmo tipo E valor) ao número 0.",
+answer:"valor === 0",
+keywords:["valor === 0"],
+exp:"=== compara tipo e valor sem coerção. valor == 0 seria true também para false, '' e '0' (coerção). Prefira sempre ==="},
+
+{topic:"Tipos",diff:"easy",type:"code",
+text:"Escreva DUAS formas de converter a string '3.14' para o número 3.14 (uma com Number, outra com o operador unário +).",
+answer:`Number('3.14')
++'3.14'`,
+keywords:["Number('3.14')","+'3.14'"],
+exp:"Number('3.14') converte a string inteira. O operador unário + faz o mesmo de forma mais curta. Ambos retornam NaN se houver caracteres não numéricos."},
+
+{topic:"Tipos",diff:"medium",type:"code",
+text:"Escreva uma expressão booleana que seja true quando a variável x for null OU undefined (use apenas um operador de comparação).",
+answer:"x == null",
+keywords:["x == null"],
+exp:"x == null é true tanto para null quanto para undefined, graças à coerção especial do ==. É o único caso em que == é preferível a ===."},
+
+{topic:"Tipos",diff:"hard",type:"code",
+text:"Escreva uma função ehNumeroValido(x) que retorna true apenas se x for do tipo number e NÃO for NaN.",
+answer:`function ehNumeroValido( x ) {
+  return typeof x === 'number' && !isNaN( x );
+}`,
+keywords:["function ehNumeroValido","typeof x === 'number'","!isNaN( x )"],
+exp:"typeof x === 'number' garante o tipo (NaN também é 'number'!). Por isso a segunda checagem !isNaN(x) descarta o NaN. Number.isNaN(x) seria a alternativa moderna."},
+
+// ── ESCOPO ──
+{topic:"Escopo",diff:"easy",type:"code",
+text:"Declare uma constante PI com valor 3.14 e uma variável de bloco contador iniciada em 0 (use const e let).",
+answer:`const PI = 3.14;
+let contador = 0;`,
+keywords:["const PI = 3.14","let contador = 0"],
+exp:"const para valores que não serão reatribuídos; let para variáveis que mudam. Ambos têm escopo de bloco (diferente de var, que tem escopo de função)."},
+
+{topic:"Escopo",diff:"medium",type:"code",
+text:"Reescreva o laço a seguir trocando var por let para corrigir o vazamento de escopo: for (var i = 0; i < 3; i++) { }",
+answer:"for ( let i = 0; i < 3; i++ ) { }",
+keywords:["for","let i = 0","i < 3","i++"],
+exp:"Com let, cada iteração do for tem seu próprio i (escopo de bloco). Com var, i vaza para o escopo da função e é compartilhado — causa bugs em callbacks dentro do laço."},
+
+{topic:"Escopo",diff:"hard",type:"code",
+text:"Escreva uma IIFE (função imediatamente invocada) que declara uma variável privada segredo com valor 42 e a imprime no console.",
+answer:`(function() {
+  const segredo = 42;
+  console.log( segredo );
+})();`,
+keywords:["(function()","const segredo = 42","console.log( segredo )","})();"],
+exp:"A IIFE cria um escopo isolado: segredo não vaza para o escopo global. Era o padrão clássico (pré-módulos) para encapsular variáveis e evitar poluir window."},
+
+// ── DOM ──
+{topic:"DOM",diff:"easy",type:"code",
+text:"Selecione o elemento de id 'titulo' e altere seu texto para 'Olá' usando textContent.",
+answer:"document.getElementById('titulo').textContent = 'Olá';",
+keywords:["getElementById('titulo')","textContent","'Olá'"],
+exp:"textContent define texto puro com segurança (sem interpretar HTML, sem risco de XSS). Para HTML formatado usaríamos innerHTML — mas evite com conteúdo de usuário."},
+
+{topic:"DOM",diff:"medium",type:"code",
+text:"Selecione todos os <li> dentro de uma <ul id='lista'> e imprima o texto de cada um no console (use querySelectorAll e forEach).",
+answer:"document.querySelectorAll('#lista li').forEach( li => console.log( li.textContent ) );",
+keywords:["querySelectorAll('#lista li')","forEach","li.textContent","console.log"],
+exp:"querySelectorAll retorna um NodeList, que possui forEach nativo. O seletor '#lista li' pega todos os li descendentes da ul de id 'lista'."},
+
+{topic:"DOM",diff:"hard",type:"code",
+text:"Escreva uma função adicionarItem(texto) que cria um <li> com o texto recebido (sem innerHTML) e o anexa à <ul id='lista'>.",
+answer:`function adicionarItem( texto ) {
+  const li = document.createElement('li');
+  li.append( texto );
+  document.getElementById('lista').append( li );
+}`,
+keywords:["function adicionarItem","createElement('li')","li.append( texto )","getElementById('lista').append"],
+exp:"createElement cria o nó; append() aceita string diretamente (appendChild exigiria createTextNode). Anexar ao DOM por último evita reflows desnecessários."},
+
+// ── EVENTOS ──
+{topic:"Eventos",diff:"easy",type:"code",
+text:"Registre um listener de clique no botão de id 'salvar' que chama a função salvar.",
+answer:"document.getElementById('salvar').addEventListener('click', salvar);",
+keywords:["getElementById('salvar')","addEventListener('click'","salvar"],
+exp:"addEventListener('click', salvar) — passa a referência da função (sem parênteses). Usar salvar() chamaria a função imediatamente, registrando o retorno dela como listener."},
+
+{topic:"Eventos",diff:"medium",type:"code",
+text:"A função handler foi registrada com btn.addEventListener('click', handler). Escreva o código que a remove.",
+answer:"btn.removeEventListener('click', handler);",
+keywords:["removeEventListener('click', handler)"],
+exp:"removeEventListener exige a MESMA referência de função usada no addEventListener. Por isso funções anônimas inline não podem ser removidas depois."},
+
+{topic:"Eventos",diff:"hard",type:"code",
+text:"Implemente delegação de eventos: registre um ÚNICO clique na <ul id='lista'> que, ao clicar num <li>, imprime o texto do item (use event.target).",
+answer:`document.getElementById('lista').addEventListener('click', event => {
+  if ( event.target.tagName === 'LI' ) {
+    console.log( event.target.textContent );
+  }
+});`,
+keywords:["getElementById('lista')","addEventListener('click'","event.target","tagName === 'LI'","textContent"],
+exp:"Delegação: um listener no pai atende a todos os filhos, inclusive os criados depois. event.target é o elemento clicado; checa-se tagName para reagir só aos <li>."},
+
+// ── CLASSES ──
+{topic:"Classes",diff:"easy",type:"code",
+text:"Declare a classe Animal com um constructor que recebe nome e o armazena em this.nome.",
+answer:`class Animal {
+  constructor( nome ) {
+    this.nome = nome;
+  }
+}`,
+keywords:["class Animal","constructor( nome )","this.nome = nome"],
+exp:"O constructor é o método especial chamado ao usar new Animal('Rex'). this.nome cria/atribui o atributo público da instância."},
+
+{topic:"Classes",diff:"medium",type:"code",
+text:"Crie a classe Retangulo com atributos privados #largura e #altura (recebidos no constructor) e um método area() que retorna largura × altura.",
+answer:`class Retangulo {
+  #largura;
+  #altura;
+  constructor( largura, altura ) {
+    this.#largura = largura;
+    this.#altura = altura;
+  }
+  area() {
+    return this.#largura * this.#altura;
+  }
+}`,
+keywords:["class Retangulo","#largura","#altura","constructor( largura, altura )","this.#largura","this.#altura","area()","return this.#largura * this.#altura"],
+exp:"Atributos com # são privados (inacessíveis fora da classe). O método area() usa os privados via this.#. Encapsula os dados e expõe só o comportamento."},
+
+{topic:"Classes",diff:"hard",type:"code",
+text:"Crie a classe Quadrado que herda de Retangulo (constructor recebe lado), chamando o constructor pai com super(lado, lado).",
+answer:`class Quadrado extends Retangulo {
+  constructor( lado ) {
+    super( lado, lado );
+  }
+}`,
+keywords:["class Quadrado extends Retangulo","constructor( lado )","super( lado, lado )"],
+exp:"extends estabelece a herança. super(lado, lado) chama o constructor de Retangulo passando o mesmo valor para largura e altura. super() deve ser a primeira instrução do constructor filho."},
+
+// ── MÓDULOS ──
+{topic:"Módulos",diff:"easy",type:"code",
+text:"Em um módulo ESM, exporte de forma NOMEADA uma constante TAXA com valor 0.1 e uma função aplicar(v).",
+answer:`export const TAXA = 0.1;
+export function aplicar( v ) { return v * TAXA; }`,
+keywords:["export const TAXA = 0.1","export function aplicar( v )"],
+exp:"export na frente de const/function cria exportações nomeadas. Importam-se com chaves: import { TAXA, aplicar } from './arquivo.js'."},
+
+{topic:"Módulos",diff:"medium",type:"code",
+text:"Escreva uma instrução de import que traga o default export como Calc e o export nomeado soma do arquivo './calc.js'.",
+answer:"import Calc, { soma } from './calc.js';",
+keywords:["import Calc, { soma } from './calc.js'"],
+exp:"O default vem sem chaves antes da vírgula; os nomeados, com chaves depois. Uma única instrução combina ambos."},
+
+{topic:"Módulos",diff:"hard",type:"code",
+text:"Escreva um módulo 'geometria.js' que exporta PI e a função areaCirculo de forma NOMEADA, e exporta a classe Circulo como DEFAULT.",
+answer:`export const PI = 3.14159;
+export function areaCirculo( r ) { return PI * r * r; }
+export default class Circulo {}`,
+keywords:["export const PI","export function areaCirculo","export default class Circulo"],
+exp:"Um módulo pode ter vários exports nomeados e UM default. O default é importado sem chaves e com nome livre; os nomeados, com chaves e nome fixo."},
+
+// ── STORAGE ──
+{topic:"Storage",diff:"easy",type:"code",
+text:"Salve o número 5 no localStorage na chave 'contador' (lembre que o storage só aceita strings).",
+answer:"localStorage.setItem('contador', '5');",
+keywords:["localStorage.setItem('contador'","'5'"],
+exp:"setItem grava strings. O número 5 vira '5'. Ao ler com getItem você recupera a string '5' — converta com Number() se precisar do número."},
+
+{topic:"Storage",diff:"medium",type:"code",
+text:"Leia a chave 'tema' do localStorage; se não existir, use 'claro' como valor padrão (use o operador ||).",
+answer:"const tema = localStorage.getItem('tema') || 'claro';",
+keywords:["localStorage.getItem('tema')","|| 'claro'"],
+exp:"getItem retorna null para chave inexistente; null é falsy, então || 'claro' fornece o padrão. Padrão idêntico ao usado com JSON.parse(...) || '[]'."},
+
+{topic:"Storage",diff:"hard",type:"code",
+text:"Escreva uma função adicionarFavorito(item) que lê o array da chave 'favoritos' (padrão []), faz push do item e salva novamente serializado.",
+answer:`function adicionarFavorito( item ) {
+  const favoritos = JSON.parse( localStorage.getItem('favoritos') || '[]' );
+  favoritos.push( item );
+  localStorage.setItem( 'favoritos', JSON.stringify( favoritos ) );
+}`,
+keywords:["function adicionarFavorito","JSON.parse","localStorage.getItem('favoritos') || '[]'","favoritos.push( item )","localStorage.setItem( 'favoritos'","JSON.stringify( favoritos )"],
+exp:"Ler (parse + fallback '[]'), modificar (push) e regravar (stringify) é o ciclo padrão para coleções no localStorage, que só guarda strings."},
+
+// ── ARRAYS ──
+{topic:"Arrays",diff:"easy",type:"code",
+text:"Crie um novo array dobros multiplicando por 2 cada elemento de nums (use map).",
+answer:"const dobros = nums.map( n => n * 2 );",
+keywords:["nums.map","n => n * 2"],
+exp:"map() aplica a função a cada elemento e devolve um NOVO array, sem alterar nums. Use forEach apenas quando NÃO precisar do array resultante."},
+
+{topic:"Arrays",diff:"medium",type:"code",
+text:"A partir de nums, gere um array apenas com os números maiores que 10, já multiplicados por 100 (use filter e map encadeados).",
+answer:"const result = nums.filter( n => n > 10 ).map( n => n * 100 );",
+keywords:["nums.filter","n > 10","map","n * 100"],
+exp:"filter() seleciona, map() transforma. Encadear filter().map() é o padrão recorrente da disciplina para filtrar e formatar listas."},
+
+{topic:"Arrays",diff:"hard",type:"code",
+text:"Escreva uma função totalEstoque(produtos) que soma o campo estoque de um array de objetos {nome, estoque} usando reduce a partir de 0.",
+answer:`function totalEstoque( produtos ) {
+  return produtos.reduce( ( acc, p ) => acc + p.estoque, 0 );
+}`,
+keywords:["function totalEstoque","produtos.reduce","( acc, p ) => acc + p.estoque","0"],
+exp:"reduce(reducer, valorInicial) acumula em acc. p.estoque é somado a cada iteração; o 0 é o valor inicial do acumulador. Resultado: a soma total."},
+
+// ── EXCEÇÕES ──
+{topic:"Exceções",diff:"easy",type:"code",
+text:"Escreva uma instrução que lance um Error com a mensagem 'Dados inválidos'.",
+answer:"throw new Error('Dados inválidos');",
+keywords:["throw new Error('Dados inválidos')"],
+exp:"throw new Error('msg') lança uma exceção. A mensagem fica disponível em e.message dentro do catch que a capturar."},
+
+{topic:"Exceções",diff:"medium",type:"code",
+text:"Envolva a chamada processar() em um try/catch que imprime a mensagem do erro no console e um finally que imprime 'fim'.",
+answer:`try {
+  processar();
+} catch ( e ) {
+  console.error( e.message );
+} finally {
+  console.log( 'fim' );
+}`,
+keywords:["try","processar()","catch ( e )","console.error( e.message )","finally","console.log( 'fim' )"],
+exp:"catch recebe o erro em e; e.message tem o texto. finally SEMPRE executa — mesmo com return ou erro no try. Use-o para liberar recursos."},
+
+{topic:"Exceções",diff:"hard",type:"code",
+text:"Crie uma classe SaldoInsuficiente que herda de Error e redefine this.name; depois lance-a com a mensagem 'Saldo baixo'.",
+answer:`class SaldoInsuficiente extends Error {
+  constructor( message ) {
+    super( message );
+    this.name = 'SaldoInsuficiente';
+  }
+}
+throw new SaldoInsuficiente('Saldo baixo');`,
+keywords:["class SaldoInsuficiente extends Error","constructor( message )","super( message )","this.name = 'SaldoInsuficiente'","throw new SaldoInsuficiente('Saldo baixo')"],
+exp:"extends Error herda message e stack. super(message) primeiro. this.name faz o console mostrar 'SaldoInsuficiente: Saldo baixo' em vez de 'Error: ...'."},
+
+// ── OPERADORES ──
+{topic:"Operadores",diff:"easy",type:"code",
+text:"Usando o operador ternário, atribua a status o valor 'ativo' se logado for true, senão 'inativo'.",
+answer:"const status = logado ? 'ativo' : 'inativo';",
+keywords:["logado ? 'ativo' : 'inativo'"],
+exp:"condicao ? valorSeVerdadeiro : valorSeFalso. O ternário é uma expressão (retorna valor), por isso pode ser atribuído a uma variável."},
+
+{topic:"Operadores",diff:"medium",type:"code",
+text:"Desestruture o objeto pessoa = {nome, idade} extraindo nome e idade em duas constantes.",
+answer:"const { nome, idade } = pessoa;",
+keywords:["const { nome, idade } = pessoa"],
+exp:"Desestruturação de objeto: as constantes recebem os valores das propriedades de mesmo nome. Equivale a const nome = pessoa.nome; const idade = pessoa.idade."},
+
+{topic:"Operadores",diff:"hard",type:"code",
+text:"Escreva uma função juntar(...itens) que recebe qualquer quantidade de argumentos (rest) e retorna todos concatenados num único array junto com os elementos de base (spread).",
+answer:`function juntar( ...itens ) {
+  return [ ...base, ...itens ];
+}`,
+keywords:["function juntar( ...itens )","return [ ...base, ...itens ]"],
+exp:"...itens no parâmetro é REST (agrupa argumentos num array). ...base e ...itens dentro do literal são SPREAD (espalham elementos). Mesmo símbolo, contextos opostos."},
+
+// ── PROMISE / FETCH ──
+{topic:"Promise/Fetch",diff:"easy",type:"code",
+text:"Crie uma Promise resolvida imediatamente com o valor 42 (use Promise.resolve).",
+answer:"const p = Promise.resolve( 42 );",
+keywords:["Promise.resolve( 42 )"],
+exp:"Promise.resolve(valor) devolve uma Promise já cumprida (fulfilled). Útil para padronizar retornos e em testes. O inverso é Promise.reject(motivo)."},
+
+{topic:"Promise/Fetch",diff:"medium",type:"code",
+text:"Usando .then/.catch, faça fetch em '/api/itens', converta a resposta em JSON e imprima os dados; trate erros com console.error.",
+answer:`fetch('/api/itens')
+  .then( r => r.json() )
+  .then( dados => console.log( dados ) )
+  .catch( e => console.error( e ) );`,
+keywords:["fetch('/api/itens')","then( r => r.json() )","then( dados => console.log( dados ) )","catch( e => console.error( e ) )"],
+exp:"Cada .then encadeia: o primeiro converte a resposta (r.json() retorna Promise), o segundo usa os dados. .catch captura qualquer rejeição da cadeia."},
+
+{topic:"Promise/Fetch",diff:"hard",type:"code",
+text:"Dispare duas requisições em PARALELO (op1() e op2()) e aguarde ambas com Promise.all, desestruturando os resultados em a e b.",
+answer:"const [ a, b ] = await Promise.all( [ op1(), op2() ] );",
+keywords:["const [ a, b ] = await Promise.all","[ op1(), op2() ]"],
+exp:"Iniciar as duas Promises e passá-las a Promise.all executa em paralelo. O tempo total cai para max(op1, op2) em vez de op1 + op2 (sequencial)."},
+
+// ── ASYNC / AWAIT ──
+{topic:"Async/Await",diff:"easy",type:"code",
+text:"Declare uma função assíncrona carregar() que faz await de buscar() e retorna o resultado.",
+answer:`async function carregar() {
+  const dados = await buscar();
+  return dados;
+}`,
+keywords:["async function carregar()","await buscar()","return dados"],
+exp:"async permite usar await dentro da função. await pausa até a Promise de buscar() resolver. A função async sempre retorna uma Promise."},
+
+{topic:"Async/Await",diff:"medium",type:"code",
+text:"Reescreva usando async/await: buscar().then(d => console.log(d)).catch(e => console.error(e))",
+answer:`try {
+  const d = await buscar();
+  console.log( d );
+} catch ( e ) {
+  console.error( e );
+}`,
+keywords:["try","await buscar()","console.log( d )","catch ( e )","console.error( e )"],
+exp:"async/await transforma a cadeia .then em código sequencial. O .catch vira o bloco catch. Mais legível para várias operações encadeadas."},
+
+{topic:"Async/Await",diff:"hard",type:"code",
+text:"Escreva async carregarUsuario(id) que: faz await fetch em '/usuarios/{id}'; lança Error se !response.ok; retorna o JSON. Use template literal na URL.",
+answer:`async function carregarUsuario( id ) {
+  const response = await fetch( \`/usuarios/\${id}\` );
+  if ( !response.ok ) {
+    throw new Error( 'Erro ao carregar usuário' );
+  }
+  return response.json();
+}`,
+keywords:["async function carregarUsuario( id )","await fetch","/usuarios/","!response.ok","throw new Error","return response.json()"],
+exp:"Template literal `/usuarios/${id}` injeta o id na URL. fetch não lança para 404/500 — checa-se response.ok. return response.json() devolve a Promise (sem await redundante)."},
+
+// ── REST / HTTP ──
+{topic:"REST/HTTP",diff:"easy",type:"code",
+text:"Escreva uma chamada fetch que faz uma requisição GET simples para 'http://localhost:3000/jogos'.",
+answer:"const response = await fetch('http://localhost:3000/jogos');",
+keywords:["await fetch('http://localhost:3000/jogos')"],
+exp:"GET é o método padrão do fetch — não precisa especificar options. Lembre de checar response.ok antes de usar response.json()."},
+
+{topic:"REST/HTTP",diff:"medium",type:"code",
+text:"Escreva uma chamada fetch que ATUALIZA (PUT) o jogo de id 7 em '/jogos/7', enviando JSON com header Content-Type.",
+answer:`await fetch('/jogos/7', {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify( jogo )
+});`,
+keywords:["fetch('/jogos/7'","method: 'PUT'","'Content-Type': 'application/json'","body: JSON.stringify( jogo )"],
+exp:"PUT atualiza um recurso existente (id na URL). O header Content-Type avisa que o corpo é JSON e o body envia o objeto serializado com JSON.stringify."},
+
+{topic:"REST/HTTP",diff:"hard",type:"code",
+text:"Escreva async criarRecurso(url, dados) que faz POST enviando dados como JSON; lança Error com o status se !response.ok; retorna o recurso criado (JSON).",
+answer:`async function criarRecurso( url, dados ) {
+  const response = await fetch( url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify( dados )
+  });
+  if ( !response.ok ) {
+    throw new Error( 'Erro ' + response.status );
+  }
+  return response.json();
+}`,
+keywords:["async function criarRecurso( url, dados )","method: 'POST'","'Content-Type': 'application/json'","JSON.stringify( dados )","!response.ok","throw new Error","response.status","return response.json()"],
+exp:"POST cria recurso. O servidor (json-server) devolve o objeto criado já com id — por isso return response.json(). response.status entra na mensagem de erro para diagnóstico."},
+
+// ── ARROW FUNCTIONS ──
+{topic:"Arrow Functions",diff:"easy",type:"code",
+text:"Converta para arrow function sem corpo: const triplo = function(n) { return n * 3; }",
+answer:"const triplo = n => n * 3;",
+keywords:["const triplo = n => n * 3"],
+exp:"Único parâmetro dispensa parênteses; corpo de uma expressão dispensa chaves e return. n => n * 3 é a forma mais concisa."},
+
+{topic:"Arrow Functions",diff:"medium",type:"code",
+text:"Escreva uma arrow function ehPar que recebe um número e retorna true se for par (resto da divisão por 2 igual a 0).",
+answer:"const ehPar = n => n % 2 === 0;",
+keywords:["const ehPar = n => n % 2 === 0"],
+exp:"n % 2 === 0 é true para pares. A arrow sem corpo retorna a expressão diretamente. Ideal como callback de filter: nums.filter(ehPar)."},
+
+{topic:"Arrow Functions",diff:"hard",type:"code",
+text:"Escreva uma arrow function criarContador que retorna OUTRA arrow function; cada chamada da interna incrementa e retorna um contador interno (closure).",
+answer:`const criarContador = () => {
+  let n = 0;
+  return () => ++n;
+};`,
+keywords:["const criarContador = () =>","let n = 0","return () => ++n"],
+exp:"A arrow interna forma uma closure sobre n: lembra o valor entre chamadas. const c = criarContador(); c() → 1, c() → 2. Zero parâmetros exige parênteses ()."},
+
+// ── JS BÁSICO ──
+{topic:"JS Básico",diff:"easy",type:"code",
+text:"Escreva uma função saudar(nome) que retorna a string 'Olá, <nome>!' usando template literal.",
+answer:"function saudar( nome ) { return \`Olá, \${nome}!\`; }",
+keywords:["function saudar( nome )","Olá, ","${nome}"],
+exp:"Template literals (crases) permitem interpolar com ${...}. Equivale a 'Olá, ' + nome + '!', porém mais legível."},
+
+{topic:"JS Básico",diff:"medium",type:"code",
+text:"Percorra o array notas com for..of e acumule a soma em uma variável total.",
+answer:`let total = 0;
+for ( const nota of notas ) {
+  total += nota;
+}`,
+keywords:["let total = 0","for ( const nota of notas )","total += nota"],
+exp:"for..of percorre os VALORES do array (não os índices, como for..in). Acumula em total. Para arrays simples, for..of é o laço pedido nas provas."},
+
+{topic:"JS Básico",diff:"hard",type:"code",
+text:"Escreva uma função multiplicador(fator) que retorna uma função; a função retornada multiplica seu argumento pelo fator capturado (closure).",
+answer:`function multiplicador( fator ) {
+  return function( x ) {
+    return x * fator;
+  };
+}`,
+keywords:["function multiplicador( fator )","return function( x )","return x * fator"],
+exp:"A função interna 'lembra' fator mesmo após multiplicador retornar — isso é uma closure. const dobro = multiplicador(2); dobro(5) → 10."},
+
+// ── JSON ──
+{topic:"JSON",diff:"easy",type:"code",
+text:"Converta o objeto { nome: 'Ana', idade: 30 } em uma string JSON.",
+answer:"const json = JSON.stringify( { nome: 'Ana', idade: 30 } );",
+keywords:["JSON.stringify( { nome: 'Ana', idade: 30 } )"],
+exp:"JSON.stringify converte valor JS em texto JSON. Necessário para salvar objetos no localStorage (que só aceita strings) ou enviá-los no body de um fetch."},
+
+{topic:"JSON",diff:"medium",type:"code",
+text:"Faça o parse seguro da chave 'lista' do localStorage, retornando [] caso a chave não exista.",
+answer:"const lista = JSON.parse( localStorage.getItem('lista') || '[]' );",
+keywords:["JSON.parse","localStorage.getItem('lista') || '[]'"],
+exp:"getItem retorna null se a chave não existir; || '[]' garante uma string JSON válida. JSON.parse('[]') devolve um array vazio, evitando erros ao iterar."},
+
+{topic:"JSON",diff:"hard",type:"code",
+text:"Escreva JSON.stringify do objeto config com indentação de 2 espaços (formato legível).",
+answer:"const texto = JSON.stringify( config, null, 2 );",
+keywords:["JSON.stringify( config, null, 2 )"],
+exp:"O 2º argumento (replacer) é null; o 3º (space) define a indentação. JSON.stringify(config, null, 2) gera um JSON identado com 2 espaços, fácil de ler."},
+
+// ── HTML / CSS ──
+{topic:"HTML/CSS",diff:"easy",type:"code",
+text:"Escreva o HTML de um <label> 'Nome' associado a um <input> de id 'nome' (use o atributo for).",
+answer:`<label for="nome">Nome</label>
+<input type="text" id="nome">`,
+keywords:['<label for="nome">','<input','id="nome"'],
+exp:"O for do label aponta para o id do input. Clicar no rótulo foca o campo e melhora a acessibilidade para leitores de tela."},
+
+{topic:"HTML/CSS",diff:"medium",type:"code",
+text:"Escreva o HTML de um <input type='number'> de id 'idade' que aceite valores entre 0 e 120 e seja obrigatório.",
+answer:`<input type="number" id="idade" min="0" max="120" required>`,
+keywords:['<input','type="number"','id="idade"','min="0"','max="120"','required'],
+exp:"min e max delimitam o intervalo de valores numéricos (diferente de minlength/maxlength, que contam caracteres). required torna o campo obrigatório."},
+
+{topic:"HTML/CSS",diff:"hard",type:"code",
+text:"Escreva o JavaScript para abrir como modal um <dialog id='cadastro'> ao clicar no botão id 'abrir', e fechá-lo ao clicar no botão id 'fechar'.",
+answer:`const dialog = document.getElementById('cadastro');
+document.getElementById('abrir').addEventListener('click', () => dialog.showModal());
+document.getElementById('fechar').addEventListener('click', () => dialog.close());`,
+keywords:["getElementById('cadastro')","getElementById('abrir')","showModal()","getElementById('fechar')","dialog.close()"],
+exp:"showModal() abre o <dialog> como modal (bloqueia o fundo, fecha com Esc); close() o fecha programaticamente. show() abriria sem bloquear a página."},
+
+// ── MVC / MVP ──
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"[Visão] Escreva os métodos de entrada/saída da Visão: obterNumero1() lê o input de id 'n1'; mostrarResultado(r) escreve r no elemento de id 'resultado'.",
+answer:`obterNumero1() {
+  return document.getElementById('n1').value;
+}
+mostrarResultado( r ) {
+  document.getElementById('resultado').textContent = r;
+}`,
+keywords:["obterNumero1()","getElementById('n1').value","mostrarResultado( r )","getElementById('resultado').textContent"],
+exp:"A Visão concentra o acesso ao DOM: lê entradas (value) e escreve saídas (textContent). O Modelo e a Controladora nunca tocam no DOM — chamam esses métodos."},
+
+{topic:"MVC/MVP",diff:"hard",type:"code",
+text:"[Controladora MVC] No constructor, crie o Modelo e a Visão e registre o callback: this.visao.aoDispararSomar(this.somar.bind(this)).",
+answer:`constructor() {
+  this.modelo = new Calculadora();
+  this.visao = new VisaoCalculadora();
+  this.visao.aoDispararSomar( this.somar.bind( this ) );
+}`,
+keywords:["constructor()","this.modelo = new Calculadora()","this.visao = new VisaoCalculadora()","this.visao.aoDispararSomar( this.somar.bind( this ) )"],
+exp:"No MVC a Controladora orquestra: instancia Modelo e Visão e registra seu método como callback. bind(this) é obrigatório, senão 'this' dentro de somar perderia a referência da Controladora."},
+
+// ══════════════════════════════════════════════════════════
+// LOTE DISCURSIVO 2 — MUITAS questões no estilo da prova
+// Ênfase em FÁCEIS (blocos atômicos p/ aprender) → médio → difícil
+// ══════════════════════════════════════════════════════════
+
+// ───────────────────── FÁCEIS (blocos da prova) ─────────────────────
+
+{topic:"Eventos",diff:"easy",type:"code",
+text:"[Prova] Dentro de salvar(event), escreva a primeira linha que impede o comportamento padrão do formulário.",
+answer:"event.preventDefault();",
+keywords:["event.preventDefault()"],
+exp:"event.preventDefault() impede o envio (submit) padrão do formulário, permitindo tratar o salvamento por JavaScript. É sempre a 1ª linha de salvar(event) nas provas."},
+
+{topic:"Eventos",diff:"easy",type:"code",
+text:"[Prova] Registre o clique do único <button> da página para chamar a função salvar.",
+answer:"document.querySelector('button').addEventListener('click', salvar);",
+keywords:["querySelector('button')","addEventListener('click', salvar)"],
+exp:"Passe a REFERÊNCIA salvar (sem parênteses). salvar() chamaria a função na hora. Esse registro aparece em quase toda questão de cadastro."},
+
+{topic:"Eventos",diff:"easy",type:"code",
+text:"[Prova] Execute a função listar somente após o DOM ser carregado (use DOMContentLoaded).",
+answer:"document.addEventListener('DOMContentLoaded', listar);",
+keywords:["addEventListener('DOMContentLoaded', listar)"],
+exp:"DOMContentLoaded dispara quando o HTML está pronto (antes de imagens/CSS). Garante que os elementos já existem quando listar() roda."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Leia o texto digitado no input de id 'nome' e guarde na constante nome.",
+answer:"const nome = document.getElementById('nome').value;",
+keywords:["const nome = document.getElementById('nome').value"],
+exp:".value lê o conteúdo digitado em um input. getElementById('nome') seleciona o campo pelo id. Padrão de leitura de formulários."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Leia o valor do input de id 'valor' e guarde na constante valor.",
+answer:"const valor = document.getElementById('valor').value;",
+keywords:["const valor = document.getElementById('valor').value"],
+exp:"input.value sempre devolve uma STRING — converta com Number() quando precisar comparar ou calcular."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Leia o valor do input de id 'idade' já convertendo para número (use Number).",
+answer:"const idade = Number( document.getElementById('idade').value );",
+keywords:["Number(","getElementById('idade').value"],
+exp:"input.value é string; Number(...) converte para número. Sem a conversão, comparações como valor < 50 podem dar resultado errado."},
+
+{topic:"Storage",diff:"easy",type:"code",
+text:"[Prova] Leia o array da chave 'cadastro' do localStorage; use [] se a chave não existir.",
+answer:"const cadastros = JSON.parse( localStorage.getItem('cadastro') ) || [];",
+keywords:["JSON.parse","localStorage.getItem('cadastro')","|| []"],
+exp:"getItem devolve null se a chave não existe; JSON.parse(null) é null; o || [] garante um array para dar push/iterar sem erro."},
+
+{topic:"Storage",diff:"easy",type:"code",
+text:"[Prova] Salve o array cadastros na chave 'cadastro' do localStorage (serializado).",
+answer:"localStorage.setItem( 'cadastro', JSON.stringify( cadastros ) );",
+keywords:["localStorage.setItem( 'cadastro'","JSON.stringify( cadastros )"],
+exp:"O storage só guarda strings — JSON.stringify converte o array. Para reler: JSON.parse(localStorage.getItem('cadastro'))."},
+
+{topic:"Storage",diff:"easy",type:"code",
+text:"[Prova] Leia a string da chave 'tema' do localStorage e guarde em tema.",
+answer:"const tema = localStorage.getItem('tema');",
+keywords:["const tema = localStorage.getItem('tema')"],
+exp:"getItem(chave) devolve a string salva, ou null se a chave nunca foi gravada."},
+
+{topic:"Arrays",diff:"easy",type:"code",
+text:"[Prova] Adicione o objeto cadastro ao fim do array cadastros.",
+answer:"cadastros.push( cadastro );",
+keywords:["cadastros.push( cadastro )"],
+exp:"push() acrescenta ao fim do array e devolve o novo comprimento. É o passo entre criar o objeto e salvar no localStorage."},
+
+{topic:"HTML/CSS",diff:"easy",type:"code",
+text:"[Prova] Limpe todos os campos do formulário da página após salvar (use reset).",
+answer:"document.querySelector('form').reset();",
+keywords:["querySelector('form').reset()"],
+exp:"form.reset() restaura os campos aos valores iniciais (vazios). Costuma vir no fim de salvar(), após o cadastro dar certo."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Selecione o elemento <output> da página e guarde na constante output.",
+answer:"const output = document.querySelector('output');",
+keywords:["const output = document.querySelector('output')"],
+exp:"<output> é o local semântico para mensagens de sucesso/erro. Preenche-se com output.innerText (texto) ou output.innerHTML (HTML)."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Exiba a mensagem 'Cadastro realizado com sucesso' no elemento output (texto puro).",
+answer:"output.innerText = 'Cadastro realizado com sucesso';",
+keywords:["output.innerText = 'Cadastro realizado com sucesso'"],
+exp:"innerText insere texto simples, sem interpretar HTML. Para várias linhas de erro com <p>, usa-se innerHTML."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Crie um elemento <tr> e guarde na constante tr.",
+answer:"const tr = document.createElement('tr');",
+keywords:["const tr = document.createElement('tr')"],
+exp:"createElement('tr') cria a linha da tabela na memória. Ela só aparece na tela após ser anexada (append) ao tbody."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Crie um <td>, defina seu textContent como c.nome e guarde em tdNome.",
+answer:`const tdNome = document.createElement('td');
+tdNome.textContent = c.nome;`,
+keywords:["createElement('td')","tdNome.textContent = c.nome"],
+exp:"textContent insere texto com segurança (sem XSS, diferente de innerHTML). Cada <td> é uma célula da linha."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Anexe as células tdNome e tdValor ao tr (de uma só vez).",
+answer:"tr.append( tdNome, tdValor );",
+keywords:["tr.append( tdNome, tdValor )"],
+exp:"append() aceita vários nós de uma vez. Anexar as duas células à linha antes de inserir a linha no tbody reduz reflows."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Selecione o <tbody> e anexe a linha tr a ele.",
+answer:"document.querySelector('tbody').append( tr );",
+keywords:["querySelector('tbody').append( tr )"],
+exp:"O <tbody> recebe as linhas de dados. append(tr) insere a linha já montada — é quando ela aparece na tabela."},
+
+{topic:"Arrays",diff:"easy",type:"code",
+text:"[Prova] Filtre cadastros mantendo apenas os com valor numérico maior ou igual a 100.",
+answer:"const filtrados = cadastros.filter( c => Number( c.valor ) >= 100 );",
+keywords:["cadastros.filter","Number( c.valor ) >= 100"],
+exp:"filter devolve um novo array só com os que passam no teste. Number(c.valor) converte a string antes de comparar — passo essencial."},
+
+{topic:"Tipos",diff:"easy",type:"code",
+text:"[Prova] Escreva a condição que é verdadeira quando valor NÃO é um número (use isNaN e Number).",
+answer:"isNaN( Number( valor ) )",
+keywords:["isNaN( Number( valor ) )"],
+exp:"Number(valor) converte a string; isNaN(...) é true quando o resultado não é número. Padrão de validação numérica das provas (não use !Number(valor))."},
+
+{topic:"JS Básico",diff:"easy",type:"code",
+text:"[Prova] Some o comprimento (length) de cada nome do array nomes na variável soma usando for..of.",
+answer:`for ( const nome of nomes ) {
+  soma += nome.length;
+}`,
+keywords:["for ( const nome of nomes )","soma += nome.length"],
+exp:"for..of percorre os VALORES do array. nome.length é o nº de caracteres. Era exatamente a base da questão mediaDosNomes da prova."},
+
+{topic:"Arrays",diff:"easy",type:"code",
+text:"[Prova] Transforme cadastros num array de <li> com c.nome (use map e template literal).",
+answer:`const itens = cadastros.map( c => \`<li>\${c.nome}</li>\` );`,
+keywords:["cadastros.map","<li>","${c.nome}"],
+exp:"map devolve um novo array — aqui, de strings <li>. O template literal (crases) interpola ${c.nome}. Depois junta-se com join('')."},
+
+{topic:"Arrays",diff:"easy",type:"code",
+text:"[Prova] Junte o array itens (strings) numa única string sem separador.",
+answer:"const texto = itens.join('');",
+keywords:["itens.join('')"],
+exp:"join('') concatena todos os elementos sem nada entre eles. Resultado: uma string de HTML pronta para innerHTML."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Coloque a string texto dentro da <ul id='lista'> usando innerHTML.",
+answer:"document.getElementById('lista').innerHTML = texto;",
+keywords:["getElementById('lista').innerHTML = texto"],
+exp:"innerHTML interpreta a string como HTML (cria os <li>). Útil para listas montadas com map().join('') — mas evite com dados do usuário (XSS)."},
+
+{topic:"Classes",diff:"easy",type:"code",
+text:"[Prova] Declare dois atributos privados #descricao e #valor dentro de uma classe.",
+answer:`#descricao;
+#valor;`,
+keywords:["#descricao;","#valor;"],
+exp:"O # torna o atributo privado (inacessível fora da classe). Declaram-se pelo nome, sem let/const. Base da classe Servico da prova."},
+
+{topic:"Classes",diff:"easy",type:"code",
+text:"[Prova] Escreva um getter público valor que retorna o atributo privado #valor.",
+answer:`get valor() {
+  return this.#valor;
+}`,
+keywords:["get valor()","return this.#valor"],
+exp:"O getter expõe o valor de um atributo privado para leitura externa (obj.valor), sem permitir acesso direto ao #valor."},
+
+{topic:"Classes",diff:"easy",type:"code",
+text:"[Prova] Escreva um setter valor que atribui valorNovo ao atributo privado #valor.",
+answer:`set valor( valorNovo ) {
+  this.#valor = valorNovo;
+}`,
+keywords:["set valor( valorNovo )","this.#valor = valorNovo"],
+exp:"O setter intercepta a atribuição obj.valor = x. É o ponto onde se costuma validar antes de gravar no atributo privado."},
+
+{topic:"Classes",diff:"easy",type:"code",
+text:"[Prova] Escreva o método paraObjeto() que retorna um objeto simples com descricao e valor (a partir dos privados).",
+answer:`paraObjeto() {
+  return { descricao: this.#descricao, valor: this.#valor };
+}`,
+keywords:["paraObjeto()","return { descricao: this.#descricao, valor: this.#valor }"],
+exp:"paraObjeto() converte a INSTÂNCIA em objeto simples antes de salvar no localStorage (a instância perderia métodos/privados ao serializar)."},
+
+{topic:"Operadores",diff:"easy",type:"code",
+text:"[Prova] Escreva a assinatura de um constructor que recebe um objeto desestruturado com descricao e valor.",
+answer:"constructor( { descricao, valor } ) {}",
+keywords:["constructor( { descricao, valor } )"],
+exp:"A desestruturação no parâmetro extrai descricao e valor do objeto recebido. Permite chamar new Servico({descricao, valor})."},
+
+{topic:"Exceções",diff:"easy",type:"code",
+text:"[Prova] Adicione a mensagem 'O nome deve ter entre 2 e 100 caracteres' ao array de erros validacao.",
+answer:"validacao.push( 'O nome deve ter entre 2 e 100 caracteres' );",
+keywords:["validacao.push( 'O nome deve ter entre 2 e 100 caracteres' )"],
+exp:"Em vez de lançar exceção, o padrão da prova acumula mensagens num array e quem chama checa validacao.length > 0."},
+
+{topic:"Operadores",diff:"easy",type:"code",
+text:"[Prova] Atribua a status 'aprovado' se nota >= 6, senão 'reprovado' (operador ternário).",
+answer:"const status = nota >= 6 ? 'aprovado' : 'reprovado';",
+keywords:["nota >= 6 ? 'aprovado' : 'reprovado'"],
+exp:"condicao ? a : b é uma expressão que devolve um valor. Mais conciso que if/else para escolher entre dois valores."},
+
+{topic:"Arrays",diff:"easy",type:"code",
+text:"[Prova] Escreva a condição usada para saber se o array problemas contém algum erro.",
+answer:"problemas.length > 0",
+keywords:["problemas.length > 0"],
+exp:"length > 0 indica que há mensagens de erro. Quando verdadeiro, exibe-se os erros e interrompe (return) o salvamento."},
+
+{topic:"Eventos",diff:"easy",type:"code",
+text:"[Prova] Remova do DOM o elemento guardado na variável liEscolhida.",
+answer:"liEscolhida.remove();",
+keywords:["liEscolhida.remove()"],
+exp:".remove() exclui o próprio elemento do DOM. Usado após apagar o item correspondente do array e do localStorage."},
+
+{topic:"Async/Await",diff:"easy",type:"code",
+text:"[Prova] Declare uma função assíncrona obterDados() com corpo vazio.",
+answer:"async function obterDados() {}",
+keywords:["async function obterDados()"],
+exp:"async torna a função assíncrona: ela retorna uma Promise e permite usar await no corpo."},
+
+{topic:"Promise/Fetch",diff:"easy",type:"code",
+text:"[Prova] Faça um await fetch GET para '/jogos' e guarde a resposta em response.",
+answer:"const response = await fetch('/jogos');",
+keywords:["const response = await fetch('/jogos')"],
+exp:"GET é o método padrão do fetch. await pausa até a resposta chegar. Sempre cheque response.ok depois antes de usar os dados."},
+
+{topic:"Promise/Fetch",diff:"easy",type:"code",
+text:"[Prova] Lance um Error com a mensagem 'Erro ao obter os jogos' caso a resposta não seja bem-sucedida.",
+answer:`if ( !response.ok ) {
+  throw new Error('Erro ao obter os jogos');
+}`,
+keywords:["if ( !response.ok )","throw new Error('Erro ao obter os jogos')"],
+exp:"fetch não rejeita em 404/500 — response.ok fica false. Por isso checa-se manualmente e lança-se o erro para o catch tratar."},
+
+{topic:"Async/Await",diff:"easy",type:"code",
+text:"[Prova] Retorne o corpo da resposta convertido em objeto/JSON.",
+answer:"return response.json();",
+keywords:["return response.json()"],
+exp:"response.json() devolve uma Promise com o objeto. Num return de função async, não precisa de await (o chamador aguarda)."},
+
+{topic:"REST/HTTP",diff:"easy",type:"code",
+text:"[Prova] Faça um await fetch DELETE para '/jogos/5'.",
+answer:"const response = await fetch('/jogos/5', { method: 'DELETE' });",
+keywords:["fetch('/jogos/5'","method: 'DELETE'"],
+exp:"DELETE remove o recurso identificado na URL (id 5). O método vai nas opções: { method: 'DELETE' }."},
+
+{topic:"Arrow Functions",diff:"easy",type:"code",
+text:"[Prova] Converta para arrow function sem corpo: function(c){ return Number(c.valor); }",
+answer:"c => Number( c.valor )",
+keywords:["c => Number( c.valor )"],
+exp:"Único parâmetro dispensa parênteses; corpo de uma expressão dispensa chaves e return. Comum como callback de filter/map."},
+
+{topic:"JSON",diff:"easy",type:"code",
+text:"[Prova] Serialize o objeto cadastro em uma string JSON.",
+answer:"JSON.stringify( cadastro )",
+keywords:["JSON.stringify( cadastro )"],
+exp:"JSON.stringify converte valor JS em texto JSON — necessário para gravar no localStorage ou enviar no body de um fetch."},
+
+{topic:"JSON",diff:"easy",type:"code",
+text:"[Prova] Converta a string JSON guardada em texto de volta para objeto JavaScript.",
+answer:"JSON.parse( texto )",
+keywords:["JSON.parse( texto )"],
+exp:"JSON.parse transforma texto JSON em valor JS (objeto/array). Lança SyntaxError se o texto for inválido."},
+
+{topic:"HTML/CSS",diff:"easy",type:"code",
+text:"[Prova] Escreva o HTML de um input de texto de id 'nome', obrigatório.",
+answer:`<input type="text" id="nome" required>`,
+keywords:['<input','type="text"','id="nome"','required'],
+exp:"required impede o envio com o campo vazio e ativa a validação nativa do navegador (vista por reportValidity())."},
+
+{topic:"HTML/CSS",diff:"easy",type:"code",
+text:"[Prova] Escreva o HTML de um <label> 'Valor' associado ao input de id 'valor' (atributo for).",
+answer:`<label for="valor">Valor</label>`,
+keywords:['<label for="valor">'],
+exp:"O for do label aponta para o id do input. Clicar no rótulo foca o campo e melhora a acessibilidade."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Selecione o <tbody> da página e guarde na constante tbody.",
+answer:"const tbody = document.querySelector('tbody');",
+keywords:["const tbody = document.querySelector('tbody')"],
+exp:"querySelector('tbody') pega o corpo da tabela, onde as linhas de dados são inseridas/limpas via JavaScript."},
+
+{topic:"Tipos",diff:"easy",type:"code",
+text:"[Prova] Converta a string em valor para o número equivalente e guarde em valorNum.",
+answer:"const valorNum = Number( valor );",
+keywords:["const valorNum = Number( valor )"],
+exp:"Number() converte string em número (NaN se houver caracteres inválidos). Faça isso antes de comparar valores numéricos vindos de inputs."},
+
+{topic:"Arrays",diff:"easy",type:"code",
+text:"[Prova] Crie um array vazio chamado validacao para acumular mensagens de erro.",
+answer:"let validacao = [];",
+keywords:["let validacao = []"],
+exp:"O array começa vazio e recebe push() de cada mensagem de erro encontrada. Se ficar vazio no fim, não há erros."},
+
+{topic:"JS Básico",diff:"easy",type:"code",
+text:"[Prova] Crie a constante mensagem com o texto 'Olá, <nome>!' interpolando a variável nome (template literal).",
+answer:"const mensagem = \`Olá, \${nome}!\`;",
+keywords:["const mensagem =","Olá, ","${nome}"],
+exp:"Template literals (crases) permitem interpolar com ${...}. Equivale a 'Olá, ' + nome + '!', porém mais legível."},
+
+{topic:"Arrays",diff:"easy",type:"code",
+text:"[Prova] Crie um novo array dobros com o dobro de cada número de nums (use map).",
+answer:"const dobros = nums.map( n => n * 2 );",
+keywords:["nums.map","n => n * 2"],
+exp:"map() aplica a função a cada elemento e devolve um NOVO array. nums permanece inalterado."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Defina o texto do elemento de id 'titulo' como 'Lista de Serviços' usando textContent.",
+answer:"document.getElementById('titulo').textContent = 'Lista de Serviços';",
+keywords:["getElementById('titulo')","textContent = 'Lista de Serviços'"],
+exp:"textContent troca o texto com segurança. getElementById('titulo') seleciona o elemento pelo id."},
+
+{topic:"Eventos",diff:"easy",type:"code",
+text:"[Prova] Registre no documento um listener de 'dblclick' que chama a função remover.",
+answer:"document.addEventListener('dblclick', remover);",
+keywords:["addEventListener('dblclick', remover)"],
+exp:"dblclick dispara no clique duplo. Registrado no document, usa-se event.target para descobrir qual <li> foi clicado (delegação)."},
+
+{topic:"Eventos",diff:"easy",type:"code",
+text:"[Prova] Peça uma confirmação ao usuário com a pergunta 'Deseja remover?' e guarde a resposta em ok.",
+answer:"const ok = confirm('Deseja remover?');",
+keywords:["const ok = confirm('Deseja remover?')"],
+exp:"confirm() exibe um diálogo nativo e retorna true (OK) ou false (Cancelar). Usado antes de remoções destrutivas."},
+
+{topic:"Exceções",diff:"easy",type:"code",
+text:"[Prova] No catch(erro), exiba a mensagem do erro num alerta.",
+answer:"alert( erro.message );",
+keywords:["alert( erro.message )"],
+exp:"erro.message contém o texto da exceção. alert(erro.message) mostra só a mensagem — não o objeto erro inteiro."},
+
+{topic:"Arrays",diff:"easy",type:"code",
+text:"[Prova] Remova 1 elemento do array cadastros na posição index (use splice).",
+answer:"cadastros.splice( index, 1 );",
+keywords:["cadastros.splice( index, 1 )"],
+exp:"splice(index, 1) remove 1 item a partir de index e reindexa o array — diferente de delete, que deixa um buraco."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Alterne (adicionar/remover) a classe 'ativo' no elemento guardado em item.",
+answer:"item.classList.toggle('ativo');",
+keywords:["item.classList.toggle('ativo')"],
+exp:"classList.toggle() adiciona a classe se ausente e remove se presente. Não apaga as outras classes do elemento."},
+
+{topic:"Classes",diff:"easy",type:"code",
+text:"[Prova] No constructor, atribua cadastro.descricao ao atributo privado #descricao.",
+answer:"this.#descricao = cadastro.descricao;",
+keywords:["this.#descricao = cadastro.descricao"],
+exp:"Dentro do constructor, copia-se o valor recebido para o atributo privado. Acesso sempre via this.# ."},
+
+{topic:"DOM",diff:"easy",type:"code",
+text:"[Prova] Abra como modal o <dialog> da página ao registrar nada além de chamar showModal.",
+answer:"document.querySelector('dialog').showModal();",
+keywords:["querySelector('dialog').showModal()"],
+exp:"showModal() exibe o <dialog> bloqueando o restante da página (fecha com Esc). show() abriria sem bloquear."},
+
+// ───────────────────── MÉDIAS (combinações estilo prova) ─────────────────────
+
+{topic:"Estilo Prova",diff:"medium",type:"code",
+text:"[Estilo Prova] Escreva validar(cadastro) que recebe {nome, nota} e retorna um array de mensagens: nome entre 3 e 80 caracteres; nota numérica entre 0 e 10.",
+answer:`export function validar( cadastro ) {
+  const nome = cadastro.nome;
+  const nota = cadastro.nota;
+  let validacao = [];
+  if ( nome.length < 3 || nome.length > 80 ) {
+    validacao.push( 'O nome deve ter entre 3 e 80 caracteres' );
+  }
+  if ( isNaN( Number( nota ) ) || Number( nota ) < 0 || Number( nota ) > 10 ) {
+    validacao.push( 'A nota deve ser um número entre 0 e 10' );
+  }
+  return validacao;
+}`,
+keywords:["export function validar( cadastro )","cadastro.nome","cadastro.nota","validacao","nome.length < 3","validacao.push","isNaN( Number( nota ) )","return validacao"],
+exp:"Mesma estrutura da validacao.js da prova: lê campos, acumula mensagens num array, retorna []. Number(nota) converte antes de comparar."},
+
+{topic:"Estilo Prova",diff:"medium",type:"code",
+text:"[Estilo Prova] Crie a classe Livro (ESM) com privados #titulo e #preco, constructor desestruturado {titulo, preco}, e get/set para ambos.",
+answer:`export class Livro {
+  #titulo;
+  #preco;
+  constructor( { titulo, preco } ) {
+    this.#titulo = titulo;
+    this.#preco = preco;
+  }
+  get titulo() { return this.#titulo; }
+  set titulo( novo ) { this.#titulo = novo; }
+  get preco() { return this.#preco; }
+  set preco( novo ) { this.#preco = novo; }
+}`,
+keywords:["export class Livro","#titulo","#preco","constructor( { titulo, preco } )","this.#titulo = titulo","this.#preco = preco","get titulo()","set titulo( novo )","get preco()","set preco( novo )"],
+exp:"Espelha a classe Servico da prova: privados com #, constructor recebendo objeto desestruturado, getters e setters para cada atributo."},
+
+{topic:"Estilo Prova",diff:"medium",type:"code",
+text:"[Estilo Prova] Na classe Livro, escreva paraObjeto() (objeto simples titulo+preco) e a função buscarCadastro() que lê a chave 'Livros' e retorna [] se for null.",
+answer:`paraObjeto() {
+  return { titulo: this.#titulo, preco: this.#preco };
+}
+
+// fora da classe:
+export function buscarCadastro() {
+  const lista = JSON.parse( localStorage.getItem('Livros') );
+  if ( lista == null ) {
+    return [];
+  }
+  return lista;
+}`,
+keywords:["paraObjeto()","return { titulo: this.#titulo, preco: this.#preco }","export function buscarCadastro()","JSON.parse( localStorage.getItem('Livros') )","lista == null","return []","return lista"],
+exp:"paraObjeto() converte a instância em objeto simples antes de salvar. buscarCadastro() protege contra chave inexistente (JSON.parse(null) === null)."},
+
+{topic:"Estilo Prova",diff:"medium",type:"code",
+text:"[Estilo Prova] Escreva salvar(event) para livros: previne o padrão; lê 'titulo' e 'preco' do DOM; cria new Livro; busca a lista; faz push de paraObjeto(); salva em 'Livros'; e dá form.reset().",
+answer:`function salvar( event ) {
+  event.preventDefault();
+  const titulo = document.getElementById('titulo').value;
+  const preco = document.getElementById('preco').value;
+  const livro = new Livro( { titulo, preco } );
+  const livros = buscarCadastro();
+  livros.push( livro.paraObjeto() );
+  localStorage.setItem( 'Livros', JSON.stringify( livros ) );
+  document.querySelector('form').reset();
+}`,
+keywords:["function salvar( event )","event.preventDefault()","getElementById('titulo').value","getElementById('preco').value","new Livro( { titulo, preco } )","buscarCadastro()","livros.push( livro.paraObjeto() )","localStorage.setItem( 'Livros'","JSON.stringify( livros )","querySelector('form').reset()"],
+exp:"Fluxo da Q3 da prova: preventDefault, ler DOM, criar instância, push de paraObjeto() (objeto simples), stringify+setItem e reset() do formulário."},
+
+{topic:"Estilo Prova",diff:"medium",type:"code",
+text:"[Estilo Prova] Escreva listar() que busca os livros, filtra os com preco >= 50 e, para cada um, cria um <tr> com dois <td> (titulo e preco) anexados ao tbody. Use createElement e textContent.",
+answer:`function listar() {
+  const livros = buscarCadastro();
+  const filtrados = livros.filter( l => Number( l.preco ) >= 50 );
+  const tbody = document.querySelector('tbody');
+  for ( const l of filtrados ) {
+    const tr = document.createElement('tr');
+    const tdTitulo = document.createElement('td');
+    tdTitulo.textContent = l.titulo;
+    const tdPreco = document.createElement('td');
+    tdPreco.textContent = l.preco;
+    tr.append( tdTitulo, tdPreco );
+    tbody.append( tr );
+  }
+}`,
+keywords:["function listar()","buscarCadastro()","filter","Number( l.preco ) >= 50","querySelector('tbody')","for ( const l of filtrados )","createElement('tr')","createElement('td')","textContent","tr.append( tdTitulo, tdPreco )","tbody.append( tr )"],
+exp:"Igual à lista-servicos.js da prova: filter por número, for..of, createElement + textContent (sem innerHTML) e append na tabela."},
+
+{topic:"Estilo Prova",diff:"medium",type:"code",
+text:"[Estilo Prova] Liste os carros do localStorage (chave 'carros', padrão []) num <ul> anexado ao body, usando map() para gerar '<li>modelo - R$ preco</li>' e join('').",
+answer:`const carros = JSON.parse( localStorage.getItem('carros') ) || [];
+const ul = document.createElement('ul');
+const texto = carros.map( c => \`<li>\${c.modelo} - R$ \${c.preco}</li>\` );
+ul.innerHTML = texto.join('');
+document.querySelector('body').append( ul );`,
+keywords:["JSON.parse( localStorage.getItem('carros') ) || []","createElement('ul')","carros.map","<li>","${c.modelo}","${c.preco}","ul.innerHTML","texto.join('')","querySelector('body').append( ul )"],
+exp:"Padrão da prova atleta.js: map() cria as <li>, join('') concatena, innerHTML insere e append coloca a ul no body."},
+
+{topic:"Estilo Prova",diff:"medium",type:"code",
+text:"[Estilo Prova] Registre um 'dblclick' no documento que remove o <li> clicado: descobre o índice entre os irmãos, dá splice no array carros, atualiza o localStorage e remove o elemento.",
+answer:`document.addEventListener( 'dblclick', remover );
+
+function remover( event ) {
+  const li = event.target;
+  const index = Array.from( li.parentNode.children ).indexOf( li );
+  carros.splice( index, 1 );
+  localStorage.setItem( 'carros', JSON.stringify( carros ) );
+  li.remove();
+}`,
+keywords:["addEventListener( 'dblclick', remover )","event.target","Array.from( li.parentNode.children ).indexOf( li )","carros.splice( index, 1 )","localStorage.setItem( 'carros'","JSON.stringify( carros )","li.remove()"],
+exp:"Cópia da lógica de remoção da prova: event.target é o li; indexOf entre os irmãos acha a posição; splice remove do array; setItem persiste; remove() tira do DOM."},
+
+{topic:"Estilo Prova",diff:"medium",type:"code",
+text:"[Estilo Prova] No salvar(), se o array problemas tiver erros, monte uma string com cada erro em <p> e exiba no output via innerHTML; depois interrompa com return.",
+answer:`if ( problemas.length > 0 ) {
+  let texto = '';
+  for ( const p of problemas ) {
+    texto += \`<p>\${p}</p>\`;
+  }
+  output.innerHTML = texto;
+  return;
+}`,
+keywords:["if ( problemas.length > 0 )","for ( const p of problemas )","texto +=","<p>","${p}","output.innerHTML = texto","return"],
+exp:"Quando há erros, concatena-se cada mensagem em <p>, mostra-se no output com innerHTML e retorna-se cedo para não salvar."},
+
+{topic:"Estilo Prova",diff:"medium",type:"code",
+text:"[Estilo Prova] Antes de adicionar uma conta, percorra contas e, se já houver uma com o mesmo nome, alerte 'Já cadastrado' e interrompa (return).",
+answer:`for ( const c of contas ) {
+  if ( c.nome === conta.nome ) {
+    alert( 'Já cadastrado' );
+    return;
+  }
+}
+contas.push( conta );`,
+keywords:["for ( const c of contas )","if ( c.nome === conta.nome )","alert( 'Já cadastrado' )","return","contas.push( conta )"],
+exp:"O for..of verifica duplicidade por nome; return interrompe antes do push, evitando cadastros repetidos. Alternativa: contas.some(...)."},
+
+{topic:"JS Básico",diff:"medium",type:"code",
+text:"[Estilo Prova] Crie mediaDasNotas(notas) que recebe um array de números e retorna a média, usando obrigatoriamente for..of.",
+answer:`function mediaDasNotas( notas ) {
+  let soma = 0;
+  for ( const nota of notas ) {
+    soma += nota;
+  }
+  return soma / notas.length;
+}`,
+keywords:["function mediaDasNotas( notas )","let soma = 0","for ( const nota of notas )","soma += nota","return soma / notas.length"],
+exp:"Variação da mediaDosNomes da prova: acumula com for..of e divide pelo total. A prova exigia for..of — map/reduce não pontuaria."},
+
+{topic:"Async/Await",diff:"medium",type:"code",
+text:"[Estilo Prova] Escreva async listarFilmes() que, dentro de try, faz await consultarFilmes() e passa o resultado a desenharFilmes(); no catch, faz alert(erro.message).",
+answer:`async function listarFilmes() {
+  try {
+    const filmes = await consultarFilmes();
+    desenharFilmes( filmes );
+  } catch ( erro ) {
+    alert( erro.message );
+  }
+}`,
+keywords:["async function listarFilmes()","try","await consultarFilmes()","desenharFilmes( filmes )","catch ( erro )","alert( erro.message )"],
+exp:"await pausa até a consulta resolver. O try/catch trata erros de rede/HTTP relançados, exibindo a mensagem com alert."},
+
+{topic:"Estilo Prova",diff:"medium",type:"code",
+text:"[Estilo Prova] Na classe Livro, escreva problemas() que retorna um array: titulo entre 2 e 50 caracteres; preco numérico entre 10 e 1000.",
+answer:`problemas() {
+  let problema = [];
+  if ( this.#titulo.length < 2 ) {
+    problema.push( \`O titulo: \${this.#titulo} tem menos que 2 caracteres;\` );
+  } else if ( this.#titulo.length > 50 ) {
+    problema.push( \`O titulo: \${this.#titulo} tem mais que 50 caracteres;\` );
+  }
+  if ( isNaN( Number( this.#preco ) ) ) {
+    problema.push( \`Preco: \${this.#preco} precisa ser um numero\` );
+  } else if ( this.#preco < 10 ) {
+    problema.push( \`Preco: \${this.#preco} precisa ser maior que 10\` );
+  } else if ( this.#preco > 1000 ) {
+    problema.push( \`Preco: \${this.#preco} precisa ser menor que 1000\` );
+  }
+  return problema;
+}`,
+keywords:["problemas()","let problema = []","this.#titulo.length < 2","problema.push","isNaN( Number( this.#preco ) )","this.#preco < 10","this.#preco > 1000","return problema"],
+exp:"Igual ao problemas() da classe Servico: valida tamanho do texto e faixa numérica, acumulando mensagens. isNaN(Number()) checa se é número."},
+
+{topic:"Promise/Fetch",diff:"medium",type:"code",
+text:"[Estilo Prova] Escreva consultarFilmes() que faz fetch GET em 'http://localhost:3000/filmes', lança Error se !response.ok e retorna a Promise com o JSON. Use .then.",
+answer:`export function consultarFilmes() {
+  return fetch( 'http://localhost:3000/filmes' )
+    .then( response => {
+      if ( !response.ok ) {
+        throw new Error( 'Erro ao consultar os filmes.' );
+      }
+      return response.json();
+    } );
+}`,
+keywords:["export function consultarFilmes()","return fetch( 'http://localhost:3000/filmes' )","then( response =>","if ( !response.ok )","throw new Error","return response.json()"],
+exp:"Retornar fetch().then() devolve uma Promise encadeada. fetch só rejeita por erro de rede; 404/500 exigem checar response.ok."},
+
+{topic:"Async/Await",diff:"medium",type:"code",
+text:"[Estilo Prova] Escreva async salvar(event): previne o padrão, valida o form com reportValidity (return se inválido) e monta o objeto filme {titulo, nota:Number(...)}.",
+answer:`async function salvar( event ) {
+  event.preventDefault();
+  const form = document.querySelector('form');
+  if ( !form.reportValidity() ) {
+    return;
+  }
+  const filme = {
+    titulo: document.getElementById('titulo').value,
+    nota: Number( document.getElementById('nota').value )
+  };
+}`,
+keywords:["async function salvar( event )","event.preventDefault()","querySelector('form')","if ( !form.reportValidity() )","return","const filme = {","getElementById('titulo').value","nota: Number(","getElementById('nota').value"],
+exp:"reportValidity() roda a validação nativa do HTML5 e aborta se inválido. Number() converte a nota, pois input.value é string."},
+
+{topic:"Eventos",diff:"medium",type:"code",
+text:"[Estilo Prova] Use delegação: registre um clique na <ul id='lista'> que imprime o texto do <li> clicado (cheque event.target).",
+answer:`document.getElementById('lista').addEventListener('click', event => {
+  if ( event.target.tagName === 'LI' ) {
+    console.log( event.target.textContent );
+  }
+});`,
+keywords:["getElementById('lista')","addEventListener('click'","event.target","tagName === 'LI'","textContent"],
+exp:"Um listener no pai atende todos os filhos (inclusive dinâmicos). event.target é o elemento clicado; checa-se tagName para reagir só aos <li>."},
+
+{topic:"Async/Await",diff:"medium",type:"code",
+text:"[Estilo Prova] Reescreva usando async/await: consultar().then(d => desenhar(d)).catch(e => alert(e.message))",
+answer:`try {
+  const d = await consultar();
+  desenhar( d );
+} catch ( e ) {
+  alert( e.message );
+}`,
+keywords:["try","await consultar()","desenhar( d )","catch ( e )","alert( e.message )"],
+exp:"async/await transforma a cadeia .then em código sequencial; o .catch vira o bloco catch. Mais legível para fluxos encadeados."},
+
+{topic:"Arrays",diff:"medium",type:"code",
+text:"[Estilo Prova] A partir de produtos (array de {nome, estoque}), gere as strings 'nome: estoque un' apenas dos que têm estoque > 0 (filter + map).",
+answer:`const linhas = produtos
+  .filter( p => p.estoque > 0 )
+  .map( p => \`\${p.nome}: \${p.estoque} un\` );`,
+keywords:["produtos","filter( p => p.estoque > 0 )","map( p =>","${p.nome}","${p.estoque}"],
+exp:"filter seleciona os com estoque; map formata cada um numa string. Encadear filter().map() é o padrão de listagem da disciplina."},
+
+{topic:"HTML/CSS",diff:"medium",type:"code",
+text:"[Estilo Prova] Escreva o HTML de um formulário com input de texto id 'titulo', input number id 'nota' (0 a 10), um <button> Salvar e um <output>.",
+answer:`<form>
+  <input type="text" id="titulo" required>
+  <input type="number" id="nota" min="0" max="10" required>
+  <button type="button">Salvar</button>
+  <output></output>
+</form>`,
+keywords:['<form>','<input','id="titulo"','type="number"','id="nota"','min="0"','max="10"','<button','<output>'],
+exp:"min/max delimitam o número; required ativa a validação nativa; button type='button' evita submit (o salvar é via addEventListener)."},
+
+{topic:"Storage",diff:"medium",type:"code",
+text:"[Estilo Prova] Escreva atualizarLista(item) que lê 'itens' (padrão []), faz push do item, regrava no localStorage e retorna a lista atualizada.",
+answer:`function atualizarLista( item ) {
+  const itens = JSON.parse( localStorage.getItem('itens') ) || [];
+  itens.push( item );
+  localStorage.setItem( 'itens', JSON.stringify( itens ) );
+  return itens;
+}`,
+keywords:["function atualizarLista( item )","JSON.parse( localStorage.getItem('itens') ) || []","itens.push( item )","localStorage.setItem( 'itens'","JSON.stringify( itens )","return itens"],
+exp:"Ciclo ler-modificar-gravar: parse com fallback [], push e stringify. O storage só guarda strings, daí o stringify/parse."},
+
+// ───────────────────── DIFÍCEIS (questões completas estilo prova) ─────────────────────
+
+{topic:"Estilo Prova",diff:"hard",type:"code",
+text:"[Estilo Prova completa] Crie a classe Aluno (ESM) com privados #nome e #nota; constructor desestruturado {nome, nota}; getters; e problemas() que retorna mensagens: nome 2-100 chars; nota número entre 0 e 10.",
+answer:`export class Aluno {
+  #nome;
+  #nota;
+  constructor( { nome, nota } ) {
+    this.#nome = nome;
+    this.#nota = nota;
+  }
+  get nome() { return this.#nome; }
+  get nota() { return this.#nota; }
+  paraObjeto() {
+    return { nome: this.#nome, nota: this.#nota };
+  }
+  problemas() {
+    let problema = [];
+    if ( this.#nome.length < 2 || this.#nome.length > 100 ) {
+      problema.push( 'O nome deve ter entre 2 e 100 caracteres' );
+    }
+    if ( isNaN( Number( this.#nota ) ) || Number( this.#nota ) < 0 || Number( this.#nota ) > 10 ) {
+      problema.push( 'A nota deve ser um número entre 0 e 10' );
+    }
+    return problema;
+  }
+}`,
+keywords:["export class Aluno","#nome","#nota","constructor( { nome, nota } )","this.#nome = nome","this.#nota = nota","get nome()","get nota()","paraObjeto()","problemas()","this.#nome.length < 2","isNaN( Number( this.#nota ) )","return problema"],
+exp:"Classe completa no molde da prova: privados, constructor desestruturado, getters, paraObjeto() e problemas() retornando array de erros."},
+
+{topic:"Estilo Prova",diff:"hard",type:"code",
+text:"[Estilo Prova completa] Escreva salvar(event) para Aluno: previne o padrão; lê 'nome' e 'nota'; cria new Aluno; se problemas() houver, mostra-os em <p> no output e retorna; senão busca a lista, push de paraObjeto(), salva em 'alunos' e exibe 'Salvo' + form.reset().",
+answer:`function salvar( event ) {
+  event.preventDefault();
+  const nome = document.getElementById('nome').value;
+  const nota = document.getElementById('nota').value;
+  const aluno = new Aluno( { nome, nota } );
+  const output = document.querySelector('output');
+  const problemas = aluno.problemas();
+  if ( problemas.length > 0 ) {
+    let texto = '';
+    for ( const p of problemas ) {
+      texto += \`<p>\${p}</p>\`;
+    }
+    output.innerHTML = texto;
+    return;
+  }
+  const alunos = JSON.parse( localStorage.getItem('alunos') ) || [];
+  alunos.push( aluno.paraObjeto() );
+  localStorage.setItem( 'alunos', JSON.stringify( alunos ) );
+  output.innerText = 'Salvo';
+  document.querySelector('form').reset();
+}`,
+keywords:["function salvar( event )","event.preventDefault()","getElementById('nome').value","getElementById('nota').value","new Aluno( { nome, nota } )","aluno.problemas()","problemas.length > 0","<p>","${p}","output.innerHTML = texto","return","JSON.parse( localStorage.getItem('alunos') ) || []","alunos.push( aluno.paraObjeto() )","localStorage.setItem( 'alunos'","JSON.stringify( alunos )","output.innerText = 'Salvo'","querySelector('form').reset()"],
+exp:"Fluxo completo da Q3 da prova: validar primeiro (mostrar erros e return), depois salvar paraObjeto() (objeto simples), persistir e limpar o form."},
+
+{topic:"Estilo Prova",diff:"hard",type:"code",
+text:"[Estilo Prova completa] Escreva listar() para alunos: busca a lista (padrão []), filtra nota >= 6, e para cada aluno cria um <tr> com <td> de nome e nota (textContent) anexado ao tbody, que é limpo antes com replaceChildren().",
+answer:`function listar() {
+  const alunos = JSON.parse( localStorage.getItem('alunos') ) || [];
+  const aprovados = alunos.filter( a => Number( a.nota ) >= 6 );
+  const tbody = document.querySelector('tbody');
+  tbody.replaceChildren();
+  for ( const a of aprovados ) {
+    const tr = document.createElement('tr');
+    const tdNome = document.createElement('td');
+    tdNome.textContent = a.nome;
+    const tdNota = document.createElement('td');
+    tdNota.textContent = a.nota;
+    tr.append( tdNome, tdNota );
+    tbody.append( tr );
+  }
+}`,
+keywords:["function listar()","JSON.parse( localStorage.getItem('alunos') ) || []","filter( a => Number( a.nota ) >= 6 )","querySelector('tbody')","tbody.replaceChildren()","for ( const a of aprovados )","createElement('tr')","createElement('td')","textContent","tr.append( tdNome, tdNota )","tbody.append( tr )"],
+exp:"replaceChildren() limpa o tbody antes de redesenhar (evita duplicar linhas). filter + createElement + textContent + append montam a tabela com segurança."},
+
+{topic:"Estilo Prova",diff:"hard",type:"code",
+text:"[Estilo Prova completa] Escreva listar() que, além das linhas, calcula no <tfoot> a menor e a maior nota dos alunos, preenchendo com innerHTML uma <tr> de dois <td> (Mín. e Máx.).",
+answer:`function listar() {
+  const alunos = JSON.parse( localStorage.getItem('alunos') ) || [];
+  let min = Infinity;
+  let max = -Infinity;
+  for ( const a of alunos ) {
+    const nota = Number( a.nota );
+    if ( nota < min ) { min = nota; }
+    if ( nota > max ) { max = nota; }
+  }
+  const tfoot = document.querySelector('tfoot');
+  tfoot.innerHTML = \`
+    <tr>
+      <td>Mín.: \${min}</td>
+      <td>Máx.: \${max}</td>
+    </tr>
+  \`;
+}`,
+keywords:["function listar()","JSON.parse( localStorage.getItem('alunos') ) || []","let min = Infinity","let max = -Infinity","for ( const a of alunos )","Number( a.nota )","if ( nota < min )","if ( nota > max )","querySelector('tfoot')","tfoot.innerHTML","Mín.:","${min}","Máx.:","${max}"],
+exp:"Acumula min/max num for..of com Number() e preenche o tfoot com innerHTML — igual à lista-servicos.js da prova 2025-2."},
+
+{topic:"Estilo Prova",diff:"hard",type:"code",
+text:"[Estilo Prova completa] Crie a classe Erro de validação ValidacaoErro (extends Error, redefine this.name) e use-a: na classe Carro, um método #validar() lança ValidacaoErro se #preco não for número (isNaN) ou for menor que 0.",
+answer:`export class ValidacaoErro extends Error {
+  constructor( message ) {
+    super( message );
+    this.name = 'ValidacaoErro';
+  }
+}
+
+class Carro {
+  #preco;
+  #validar() {
+    if ( isNaN( Number( this.#preco ) ) || Number( this.#preco ) < 0 ) {
+      throw new ValidacaoErro( 'Preço deve ser número não negativo' );
+    }
+  }
+}`,
+keywords:["export class ValidacaoErro extends Error","constructor( message )","super( message )","this.name = 'ValidacaoErro'","#preco","#validar()","isNaN( Number( this.#preco ) )","throw new ValidacaoErro"],
+exp:"Exceção customizada herda de Error, com super(message) e this.name. O método privado #validar() lança a exceção quando os dados são inválidos."},
+
+{topic:"Estilo Prova",diff:"hard",type:"code",
+text:"[Estilo Prova completa] Escreva async remover(event) para uma linha de tabela: pega o <td> de ações (event.target.parentElement) e seu dataset.id; pede confirm(); se ok, dentro de try faz await removerComId(id) e remove o <tr> (parentElement.remove()); no catch faz alert.",
+answer:`async function remover( event ) {
+  const tdAcoes = event.target.parentElement;
+  const id = tdAcoes.dataset.id;
+  if ( !confirm( 'Deseja mesmo remover?' ) ) {
+    return;
+  }
+  try {
+    await removerComId( id );
+    tdAcoes.parentElement.remove();
+  } catch ( erro ) {
+    alert( erro.message );
+  }
+}`,
+keywords:["async function remover( event )","event.target.parentElement","tdAcoes.dataset.id","if ( !confirm(","return","try","await removerComId( id )","tdAcoes.parentElement.remove()","catch ( erro )","alert( erro.message )"],
+exp:"event.target é o botão; parentElement é o <td data-id>. Após remover na API (await), o <tr> é tirado do DOM — mantendo dados e tela sincronizados."},
+
+{topic:"MVC/MVP",diff:"hard",type:"code",
+text:"[Estilo Prova — Serviço] Crie a classe ServicoFilmes (ESM) com async obterFilmes() (GET /filmes, lança Error se !response.ok, retorna JSON) e async removerFilme(id) (DELETE /filmes/{id}, 404 = 'Filme não encontrado', outros erros = 'Erro ao remover').",
+answer:`const API = 'http://localhost:3000';
+
+export class ServicoFilmes {
+  async obterFilmes() {
+    const response = await fetch( \`\${API}/filmes\` );
+    if ( !response.ok ) {
+      throw new Error( 'Erro ao obter os filmes.' );
+    }
+    return response.json();
+  }
+
+  async removerFilme( id ) {
+    const response = await fetch( \`\${API}/filmes/\${id}\`, { method: 'DELETE' } );
+    if ( response.status === 404 ) {
+      throw new Error( 'Filme não encontrado' );
+    }
+    if ( !response.ok ) {
+      throw new Error( 'Erro ao remover' );
+    }
+  }
+}`,
+keywords:["export class ServicoFilmes","async obterFilmes()","await fetch","${API}/filmes","!response.ok","throw new Error","return response.json()","async removerFilme( id )","method: 'DELETE'","response.status === 404","Filme não encontrado"],
+exp:"O Serviço isola o acesso à API. fetch não rejeita em 404/500 — checa-se response.ok/status. DELETE recebe o id na URL via template literal."},
+
+{topic:"MVC/MVP",diff:"hard",type:"code",
+text:"[Estilo Prova — Apresentador] Crie a ControladoraFilmes: importa ServicoFilmes; constructor recebe a visao e cria o servico; async listar() que obtém os filmes e chama visao.desenhar, tratando erro com visao.mostrarErro.",
+answer:`import { ServicoFilmes } from './servico-filmes.js';
+
+export class ControladoraFilmes {
+  constructor( visao ) {
+    this.servico = new ServicoFilmes();
+    this.visao = visao;
+  }
+
+  async listar() {
+    try {
+      const filmes = await this.servico.obterFilmes();
+      this.visao.desenhar( filmes );
+    } catch ( erro ) {
+      this.visao.mostrarErro( erro );
+    }
+  }
+}`,
+keywords:["import { ServicoFilmes } from './servico-filmes.js'","export class ControladoraFilmes","constructor( visao )","this.servico = new ServicoFilmes()","this.visao = visao","async listar()","try","await this.servico.obterFilmes()","this.visao.desenhar( filmes )","catch ( erro )","this.visao.mostrarErro( erro )"],
+exp:"O Apresentador pede dados ao Serviço e manda a Visão desenhar. O try/catch encaminha sucesso (desenhar) ou erro (mostrarErro) à Visão, sem o Serviço tocar no DOM."},
+
+{topic:"Estilo Prova",diff:"hard",type:"code",
+text:"[Estilo Prova completa] Crie 'cadastro.js' completo (importa validar): no DOMContentLoaded registra o clique do botão em salvar; salvar(event) lê nome/peso/altura, monta cadastro, chama validar; se houver erros mostra <p> no output, senão faz push no array 'cadastro' e form.reset().",
+answer:`import { validar } from './validacao.js';
+
+document.addEventListener( 'DOMContentLoaded', () => {
+  document.querySelector('button').addEventListener('click', salvar);
+} );
+
+function salvar( event ) {
+  event.preventDefault();
+  const nome = document.getElementById('nome').value;
+  const peso = document.getElementById('peso').value;
+  const altura = document.getElementById('altura').value;
+  const cadastro = { nome, peso, altura };
+  const validacao = validar( cadastro );
+  const output = document.querySelector('output');
+  if ( validacao.length > 0 ) {
+    let texto = '';
+    for ( const v of validacao ) {
+      texto += \`<p>\${v}</p>\`;
+    }
+    output.innerHTML = texto;
+  } else {
+    const cadastros = JSON.parse( localStorage.getItem('cadastro') ) || [];
+    cadastros.push( cadastro );
+    localStorage.setItem( 'cadastro', JSON.stringify( cadastros ) );
+    document.querySelector('form').reset();
+  }
+}`,
+keywords:["import { validar } from './validacao.js'","addEventListener( 'DOMContentLoaded'","querySelector('button').addEventListener('click', salvar)","function salvar( event )","event.preventDefault()","const cadastro = { nome, peso, altura }","validar( cadastro )","if ( validacao.length > 0 )","<p>","${v}","output.innerHTML = texto","JSON.parse( localStorage.getItem('cadastro') ) || []","cadastros.push( cadastro )","localStorage.setItem( 'cadastro'","querySelector('form').reset()"],
+exp:"Reprodução fiel do cadastro.js da prova 2024-2: DOMContentLoaded, leitura do DOM, validar() externo, erros em <p> via innerHTML ou push+setItem+reset."},
+
+{topic:"Estilo Prova",diff:"hard",type:"code",
+text:"[Estilo Prova completa] Escreva o desenho da tabela de cadastros num <tbody> via innerHTML acumulando <tr> com template literal, e no <tfoot> a média dos pesos e a maior altura (use for..of).",
+answer:`const cadastros = JSON.parse( localStorage.getItem('cadastro') ) || [];
+let texto = '';
+let media = 0;
+let maior = -Infinity;
+for ( const c of cadastros ) {
+  if ( Number( c.altura ) > maior ) {
+    maior = Number( c.altura );
+  }
+  media += Number( c.peso );
+  texto += \`<tr><td>\${c.nome}</td><td>\${c.peso}</td><td>\${c.altura}</td></tr>\`;
+}
+document.querySelector('tbody').innerHTML = texto;
+document.querySelector('tfoot').textContent = \`Média de pesos: \${media / cadastros.length} | Maior altura: \${maior}\`;`,
+keywords:["JSON.parse( localStorage.getItem('cadastro') ) || []","let texto = ''","let media = 0","let maior = -Infinity","for ( const c of cadastros )","Number( c.altura ) > maior","media += Number( c.peso )","<tr>","${c.nome}","querySelector('tbody').innerHTML = texto","Média de pesos:","${maior}"],
+exp:"Espelha o altos.js da prova: acumula linhas em texto, calcula média e maior no mesmo for..of, e injeta no tbody/tfoot — Number() converte as strings."},
+
+{topic:"Estilo Prova",diff:"hard",type:"code",
+text:"[Estilo Prova completa] Escreva async cadastrarFilme(filme) que faz POST para 'http://localhost:3000/filmes' com header Content-Type application/json, corpo em JSON; lança Error se !response.ok; retorna o filme criado.",
+answer:`async function cadastrarFilme( filme ) {
+  const response = await fetch( 'http://localhost:3000/filmes', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify( filme )
+  } );
+  if ( !response.ok ) {
+    throw new Error( 'Erro ao cadastrar o filme' );
+  }
+  return response.json();
+}`,
+keywords:["async function cadastrarFilme( filme )","await fetch( 'http://localhost:3000/filmes'","method: 'POST'","'Content-Type': 'application/json'","body: JSON.stringify( filme )","!response.ok","throw new Error","return response.json()"],
+exp:"POST cria o recurso. O header Content-Type avisa que o corpo é JSON (JSON.stringify). O json-server devolve o filme criado já com id — por isso o return response.json()."},
+
 ];
