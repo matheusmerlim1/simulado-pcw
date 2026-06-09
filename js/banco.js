@@ -1199,7 +1199,17 @@ keywords:["#nome","#preco","#quantidade","get nome","get preco","get quantidade"
 exp:"Atributos privados com # — inacessíveis fora da classe. Getters públicos sem o #. A questão da prova pedia APENAS getters (sem setters). Export nomeado (com chaves na importação)."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Q2a-parte 2] Na classe Produto, adicione um método PRIVADO #validar() que: lança EntradaInvalida se #nome não for string ou tiver menos de 2 chars; lança EntradaInvalida se #preco não for número ou for menor que 0; lança EntradaInvalida se #quantidade não for número inteiro ou for menor que 0.",
+text:"Considere a classe Produto abaixo, que importa a exceção EntradaInvalida (uma subclasse de Error). Escreva, DENTRO dessa classe, o MÉTODO PRIVADO #validar() — um método sem parâmetros e sem retorno que valida os atributos e lança 'new EntradaInvalida(mensagem)' quando: #nome não for string ou tiver menos de 2 caracteres; #preco não for número (use isNaN) ou for menor que 0; #quantidade não for número (use isNaN) ou for menor que 0. (Escreva apenas o método, com as chaves.)",
+code:`import EntradaInvalida from './entrada-invalida.js';
+
+export class Produto {
+  #nome;
+  #preco;
+  #quantidade;
+  // getters já existem...
+
+  // 👉 escreva aqui o método #validar()
+}`,
 answer:`#validar() {
   if ( typeof this.#nome !== 'string' || this.#nome.length < 2 ) {
     throw new EntradaInvalida( 'Nome deve ter pelo menos 2 caracteres' );
@@ -1215,7 +1225,15 @@ keywords:["#validar","typeof","this.#nome","isNaN","this.#preco","this.#quantida
 exp:"Método privado com #. Validação de tipo com typeof para strings. isNaN para números (não !Number). throw new EntradaInvalida (a classe criada na Q1). Mesma estrutura da correção da Q2a da prova."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Q2a-parte 3] Na classe Produto, adicione o constructor que: recebe um objeto desestruturado {nome, preco, quantidade}; atribui os valores aos atributos privados; e chama this.#validar().",
+text:"Considere a classe Produto abaixo (com os atributos privados #nome, #preco, #quantidade e o método privado #validar() já definidos). Escreva, DENTRO dela, o CONSTRUCTOR que: recebe UM objeto e o desestrutura no parâmetro em {nome, preco, quantidade}; atribui cada valor ao atributo privado correspondente; e, por último, chama o método de validação com this.#validar(). (Escreva apenas o constructor.)",
+code:`export class Produto {
+  #nome;
+  #preco;
+  #quantidade;
+  // getters e #validar() já existem...
+
+  // 👉 escreva aqui o constructor
+}`,
 answer:`constructor( { nome, preco, quantidade } ) {
   this.#nome       = nome;
   this.#preco      = preco;
@@ -1228,7 +1246,7 @@ exp:"Desestruturação no parâmetro do constructor. Atribuição aos atributos 
 // ── CADASTRO COM LOCALSTORAGE (Q2b da prova) ──
 
 {topic:"Estilo Prova",diff:"medium",type:"code",
-text:"[Q2b-parte 1] No ESM 'cadastro.js', escreva o início do arquivo: importe a classe Produto de './produto.js'; registre o evento de clique no botão; obtenha o elemento output.",
+text:"Escreva as PRIMEIRAS linhas de um módulo ESM de cadastro: (1) importe a classe Produto (exportada de forma nomeada) do arquivo './produto.js'; (2) registre a função salvar (que será definida mais abaixo no mesmo arquivo) como listener de clique do único <button> da página; (3) guarde o elemento <output> da página na constante output.",
 answer:`import { Produto } from './produto.js';
 
 document.querySelector('button').addEventListener('click', salvar);
@@ -1237,7 +1255,7 @@ keywords:["import","Produto","./produto.js","addEventListener","click","salvar",
 exp:"Import nomeado (com chaves) porque Produto foi exportado como 'export class'. Registrar o event listener antes de definir a função salvar é OK (hoisting). querySelector('output') para o elemento de saída."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Q2b-parte 2] Escreva a função salvar(event) que: previne o comportamento padrão; lê os campos descricao, preco e quantidade do DOM; lê o array do localStorage (chave 'produtos', padrão []); cria um new Produto; converte para objeto simples e faz push; salva no localStorage.",
+text:"Escreva a FUNÇÃO salvar(event) de um cadastro de produtos. Suponha que a classe Produto já foi importada e que a constante output referencia o <output> da página. A função deve: prevenir o comportamento padrão do formulário; ler os valores dos inputs de ids 'descricao', 'preco' e 'quantidade'; ler o array da chave 'produtos' do localStorage (use [] como padrão); dentro de um try, criar 'new Produto({ nome: descricao, preco, quantidade })', dar push de um OBJETO SIMPLES (não a instância) no array e salvar de volta no localStorage; no catch, exibir a mensagem do erro em output.innerText.",
 answer:`function salvar( event ) {
   event.preventDefault();
   const descricao  = document.getElementById('descricao').value;
@@ -1256,7 +1274,7 @@ keywords:["event.preventDefault","getElementById","JSON.parse","localStorage.get
 exp:"preventDefault() impede submit. JSON.parse + || '[]' protege contra chave inexistente. push de objeto simples (sem instância de classe). JSON.stringify para salvar. catch com e.message — não o objeto e inteiro."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Q2b-parte 3] No bloco de sucesso do try (após salvar no localStorage), exiba 'Salvo com sucesso' no output, e depois de 2 segundos limpe o output e os campos descricao, preco e quantidade.",
+text:"Dentro da função salvar(event) de um cadastro (a constante output referencia o <output> da página), escreva o trecho do bloco de SUCESSO — logo após salvar no localStorage — que: exibe 'Salvo com sucesso' em output.innerText; e, após 2 segundos (setTimeout), limpa o output e os três campos do formulário (inputs de ids 'descricao', 'preco' e 'quantidade', zerando o .value de cada um).",
 answer:`output.innerText = 'Salvo com sucesso';
 setTimeout( () => {
   output.innerText = '';
@@ -1270,7 +1288,7 @@ exp:"Mensagem de sucesso imediata. setTimeout com 2000ms (2 segundos) para limpa
 // ── LISTAGEM COM MAP/FILTER/DOM (Q3 da prova) ──
 
 {topic:"Estilo Prova",diff:"medium",type:"code",
-text:"[Q3-parte 1] No ESM 'listagem.js', registre a listagem inicial ao carregar o DOM e registre o evento de pesquisa no botão. Use DOMContentLoaded.",
+text:"Escreva o trecho de inicialização de um módulo de listagem. Suponha que existem as funções listar(texto) (redesenha a lista) e pesquisar(event) (definidas no mesmo arquivo). No evento DOMContentLoaded do documento, chame listar('') para mostrar todos os itens e registre pesquisar como listener de clique do <button> da página.",
 answer:`document.addEventListener( 'DOMContentLoaded', () => {
   listar( '' );
   document.querySelector( 'button' ).addEventListener( 'click', pesquisar );
@@ -1279,7 +1297,7 @@ keywords:["DOMContentLoaded","listar","addEventListener","click","pesquisar"],
 exp:"DOMContentLoaded garante que o DOM está pronto. Chamar listar('') ao carregar mostra todos os itens. Registrar o click no botão. Erro da prova: não chamar listar() ao carregar — lista ficava vazia."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Q3-parte 2] Escreva a função pesquisar(event) que previne o padrão, lê o valor do input de pesquisa e chama listar() com esse valor.",
+text:"Escreva a FUNÇÃO pesquisar(event). Suponha que existe a função listar(texto), que redesenha a lista filtrando pelo texto recebido. pesquisar deve: prevenir o comportamento padrão do formulário; ler o valor do <input> de pesquisa da página; e chamar listar(valor) com esse texto.",
 answer:`function pesquisar( event ) {
   event.preventDefault();
   const texto = document.querySelector( 'input' ).value;
@@ -1289,7 +1307,7 @@ keywords:["event.preventDefault","querySelector","input","value","listar"],
 exp:"Simples mas essencial: preventDefault() no botão dentro de form. Ler o valor do input. Delegar para listar(texto). Mantém separação de responsabilidades."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Q3-parte 3] Escreva a função listar(pesquisa) que: lê 'produtos' do localStorage; limpa o ul; filtra por nome contendo pesquisa; mapeia para strings 'Nome X – R$ Y – Z un'; cria os <li> sem innerHTML; e adiciona ao ul. Use map(), filter() e arrow functions.",
+text:"Escreva a FUNÇÃO listar(pesquisa), onde 'pesquisa' é o texto de filtro (string). Cada item salvo é um objeto { nome, preco, quantidade }. A função deve: ler o array da chave 'produtos' do localStorage (padrão []); limpar o <ul> da página (replaceChildren); filtrar os itens cujo nome contém a pesquisa (includes); mapear cada item para a string 'nome – R$ preco – quantidade un'; e, para cada string, criar um <li> (SEM innerHTML) e anexá-lo ao <ul>. Use filter(), map() e arrow functions.",
 answer:`function listar( pesquisa ) {
   const lista = JSON.parse( localStorage.getItem('produtos') || '[]' );
   const ul = document.querySelector( 'ul' );
@@ -1386,7 +1404,7 @@ keywords:["export class Tarefa","#titulo","#concluida","get titulo","get conclui
 exp:"Estrutura completa no estilo da Q2a. Export nomeado. Privados com #. Apenas getters. Constructor desestruturado. this.#validar() com # — erro comum é chamar sem o #. Validações com typeof."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Variação Q2b] Crie o módulo 'cadastro-tarefas.js' que: importa Tarefa; ao clicar no botão, lê 'titulo' e 'concluida' do DOM; cria um new Tarefa; salva objeto simples no localStorage (chave 'tarefas'); mostra 'Salvo!' no output ou o erro no catch.",
+text:"Crie um módulo ESM completo de cadastro de tarefas. A classe Tarefa (export nomeado) está em './tarefa.js' e recebe { titulo, concluida }. O formulário tem um input de texto id 'titulo' e um checkbox id 'concluida' (use .checked para o booleano). O módulo deve: importar Tarefa; guardar o <output> em output; registrar a função salvar no clique do <button>. Em salvar(event): prevenir o padrão; ler titulo e concluida do DOM; ler o array da chave 'tarefas' (padrão []); dentro de um try, criar new Tarefa, dar push de um OBJETO SIMPLES, salvar no localStorage, mostrar 'Salvo!' em output e limpá-lo após 2s; no catch, mostrar a mensagem do erro em output.",
 answer:`import { Tarefa } from './tarefa.js';
 
 const output = document.querySelector('output');
@@ -1411,7 +1429,7 @@ keywords:["import","Tarefa","addEventListener","event.preventDefault","getElemen
 exp:"Padrão completo da Q2b. Import nomeado. Ler DOM. JSON.parse+||'[]'. new + push de objeto simples (nunca a instância). setItem com stringify. Sucesso com setTimeout. Catch com e.message."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Variação Q3] Crie 'listagem-tarefas.js': ao carregar o DOM, lista todas as tarefas; ao clicar no botão, filtra pelo texto do input. Cada item: '<li>titulo — concluida: sim/não</li>'. Use map(), filter(), forEach() e arrow functions. Sem innerHTML.",
+text:"Crie um módulo ESM completo de listagem de tarefas. Cada tarefa salva é um objeto { titulo, concluida }, na chave 'tarefas' do localStorage. O módulo deve ter: no DOMContentLoaded, chamar listar('') e registrar pesquisar no clique do <button>; a função pesquisar(event) que previne o padrão e chama listar com o valor do <input>; e a função listar(pesquisa) que lê o array (padrão []), limpa o <ul> (replaceChildren), filtra por título que contém a pesquisa, mapeia cada um para o texto 'titulo — concluída: sim/não' e cria um <li> por item (SEM innerHTML). Use filter(), map(), forEach() e arrow functions.",
 answer:`document.addEventListener( 'DOMContentLoaded', () => {
   listar( '' );
   document.querySelector('button').addEventListener('click', pesquisar);
@@ -1602,7 +1620,7 @@ keywords:["export class Calculadora","somar","Number","isNaN","throw new Error",
 exp:"O Modelo concentra a regra de negócio (validar e somar) e NÃO toca no DOM. Number() converte; isNaN() detecta entrada inválida; throw delega o tratamento à Controladora via try/catch."},
 
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[Apresentador MVP] Crie a ControladoraCalculo que: importa Calculadora; no constructor recebe a visao e cria o modelo; tem um método somar (arrow) que lê n1/n2 da visao, chama modelo.somar e mostra resultado ou erro via try/catch.",
+text:"Crie a classe ControladoraCalculo (Apresentador do MVP). Use a classe Calculadora (de './calculadora.js'), cujo método somar(n1, n2) devolve a soma ou lança Error. Ela recebe no constructor o objeto 'visao', que tem os métodos obterNumero1(), obterNumero2(), mostrarResultado(valor) e mostrarErro(erro). A classe deve: importar Calculadora; no constructor, guardar a visao e criar 'this.modelo = new Calculadora()'; ter o método somar (como ARROW function, para fixar o this) que lê n1 e n2 da visao e, num try, chama this.modelo.somar(n1, n2) e passa o resultado a this.visao.mostrarResultado(); no catch, chama this.visao.mostrarErro(erro).",
 answer:`import { Calculadora } from './calculadora.js';
 
 export class ControladoraCalculo {
@@ -1626,7 +1644,7 @@ keywords:["import","Calculadora","constructor","visao","this.modelo","new Calcul
 exp:"No MVP o Apresentador guarda a referência da Visão (recebida no constructor). somar como arrow function mantém o this léxico. try/catch encaminha o resultado ou o erro de volta à Visão."},
 
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[Visão MVP] Crie a VisaoCalculadora que: importa a Controladora; no constructor cria 'new ControladoraCalculo(this)'; em iniciar() registra o clique do botão que previne o padrão e chama this.controladora.somar().",
+text:"Crie a classe VisaoCalculadora (a Visão do MVP). Use a classe ControladoraCalculo (de './controladora-calculo.js'), que tem o método somar(). A Visão deve: importar a Controladora; no constructor, criar 'this.controladora = new ControladoraCalculo(this)' passando a si mesma; ter um método iniciar() que registra um listener de clique no <button> da página, prevenindo o padrão e chamando this.controladora.somar() (use arrow function para preservar o this).",
 answer:`import { ControladoraCalculo } from './controladora-calculo.js';
 
 export class VisaoCalculadora {
@@ -1670,7 +1688,14 @@ keywords:["export class Servico","#descricao","#valor","constructor","cadastro.d
 exp:"Atributos privados com #. Constructor recebe o objeto e atribui. paraObjeto() é essencial: converte a INSTÂNCIA em objeto simples antes de salvar no localStorage (a instância perderia métodos/privados ao serializar)."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Prova 2025-2 Q2] Na classe Servico, escreva o método problemas() que retorna um array de mensagens: descrição deve ter entre 2 e 50 caracteres; valor deve ser número (isNaN) e estar entre 50 e 5000 reais.",
+text:"Considere a classe Servico abaixo, com os atributos privados #descricao e #valor (e seus getters). Escreva, DENTRO dela, o MÉTODO problemas() — um método público, sem parâmetros, que NÃO lança exceção: ele monta e RETORNA um array de mensagens de erro (vazio se estiver tudo certo). Adicione uma mensagem quando: #descricao tiver menos de 2 ou mais de 50 caracteres; #valor não for número (use isNaN(Number(...))) ou for menor que 50 ou maior que 5000.",
+code:`export class Servico {
+  #descricao;
+  #valor;
+  // constructor e getters já existem...
+
+  // 👉 escreva aqui o método problemas()
+}`,
 answer:`problemas() {
   let problema = [];
   if ( this.#descricao.length < 2 ) {
@@ -1691,7 +1716,7 @@ keywords:["problemas","problema","this.#descricao.length","push","isNaN","Number
 exp:"Padrão de validação que RETORNA uma lista de erros (em vez de lançar exceção). Quem chama verifica problemas.length > 0. isNaN(Number(valor)) é a forma correta de checar se a string é numérica."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Prova 2025-2 Q3] Escreva a função salvar(event) que: previne o padrão; lê descricao e valor do DOM; cria new Servico; se houver problemas(), exibe-os no output (innerHTML com <p>); senão, busca a lista, faz push de paraObjeto(), salva no localStorage ('Servicos') e dá form.reset().",
+text:"Escreva a FUNÇÃO salvar(event) de um cadastro de serviços. Suponha que a classe Servico já foi importada — ela recebe { descricao, valor }, tem o método problemas() (retorna um array de mensagens de erro, vazio se ok) e paraObjeto() (retorna um objeto simples). A função deve: prevenir o padrão; ler os inputs de ids 'descricao' e 'valor'; criar new Servico; pegar o <output>; SE cadastro.problemas() tiver itens, montar uma string com cada erro em <p>, jogá-la em output.innerHTML e dar return; SENÃO, ler o array da chave 'Servicos' (padrão []), dar push de cadastro.paraObjeto(), salvar no localStorage, mostrar 'Cadastro realizado com sucesso' em output e chamar form.reset().",
 answer:`function salvar( event ) {
   event.preventDefault();
   const descricao = document.getElementById('descricao').value;
@@ -1730,7 +1755,7 @@ exp:"getItem retorna null se a chave não existir; JSON.parse(null) é null. Ver
 
 // ── Listagem com filter + tabela + tfoot min/max (prova 2025-2) ──
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Prova 2025-2 Q4] Escreva listar(): busca os cadastros, filtra apenas os com valor >= 100, e para cada um cria um <tr> com dois <td> (descricao e valor) e adiciona ao tbody. Use createElement e textContent (sem innerHTML).",
+text:"Escreva a FUNÇÃO listar() de uma listagem de serviços. Suponha que existe a função buscarCadastro(), que devolve um array de objetos { descricao, valor }. A função deve: obter os cadastros com buscarCadastro(); filtrar apenas os que têm Number(valor) >= 100; e, para cada um, criar um <tr> com dois <td> (descricao e valor, via textContent — sem innerHTML) e anexá-lo ao <tbody>. Use createElement.",
 answer:`function listar() {
   const cadastro = buscarCadastro();
   const cadastroFiltrado = cadastro.filter( c => Number( c.valor ) >= 100 );
@@ -1841,7 +1866,7 @@ keywords:["consultarContas","return fetch","contas","then","response.ok","throw 
 exp:"Todo método de uma Promise retorna outra Promise — por isso 'return fetch(...).then(...)' devolve uma Promise encadeada. O chamador faz .then(desenharContas).catch(...). fetch só rejeita por erro de rede; o 404/500 exige checar response.ok."},
 
 {topic:"DOM",diff:"hard",type:"code",
-text:"[CRUD] Escreva desenharContas(contas) que usa um DocumentFragment para inserir todas as linhas de uma vez e calcula o saldo (tipo 'P' subtrai, senão soma), exibindo 'R$ ' + saldo com 2 casas no elemento #saldo.",
+text:"Escreva a FUNÇÃO desenharContas(contas), onde 'contas' é um array de objetos { tipo, valor } (tipo 'P' = pagamento). Suponha que já existe a função auxiliar criarLinha(conta), que devolve um <tr> pronto para cada conta. A função deve: criar um DocumentFragment; para cada conta, anexar criarLinha(conta) ao fragmento e acumular o saldo (se tipo === 'P' subtrai o valor, senão soma); anexar o fragmento ao <tbody> (1 só inserção); e exibir 'R$ ' + saldo (2 casas decimais, toFixed) no elemento de id 'saldo'.",
 answer:`function desenharContas( contas ) {
   const fragmento = document.createDocumentFragment();
   let saldo = 0;
@@ -1885,7 +1910,7 @@ keywords:["getElementById","adicionar","addEventListener","click","querySelector
 exp:"showModal() abre o <dialog> bloqueando o restante da página (overlay). Para fechar usa-se dialog.close(). show() abriria sem bloquear o fundo."},
 
 {topic:"Estilo Prova",diff:"medium",type:"code",
-text:"[Cadastro] Antes de adicionar uma nova conta, escreva o trecho que percorre as contas existentes e, se já houver uma com o mesmo nome, alerta 'Usuário já cadastrado' e interrompe (return).",
+text:"Dentro de uma função salvar() de cadastro, escreva o trecho que evita nomes duplicados. Suponha que existe a função obterContas(), que devolve o array de contas já cadastradas (cada conta é um objeto { nome, ... }), e que 'conta' é o novo objeto a cadastrar. O trecho deve: obter as contas; percorrê-las (for..of) e, se alguma tiver o mesmo nome de conta.nome, exibir alert('Usuário <nome> já cadastrado') e interromper a função com return; se nenhuma repetir, dar push da nova conta no array.",
 answer:`const contas = obterContas();
 for ( const c of contas ) {
   if ( c.nome === conta.nome ) {
@@ -2235,7 +2260,14 @@ keywords:["export class ServicoJogos","async obterJogos","await fetch","${API}",
 exp:"O Serviço (Presenter de dados) isola o acesso à API. fetch só rejeita por erro de rede — por isso o if(!response.ok). A query nome:contains é do json-server. pesquisa || '' evita 'undefined' na URL."},
 
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[aula11 — Serviço] Na ServicoJogos, escreva async removerJogoPeloId(id): faz DELETE na rota /jogos/{id}; se o status for 404 lança 'Jogo não encontrado para remoção'; se !response.ok lança 'Erro ao remover o jogo'.",
+text:"Considere a classe ServicoJogos abaixo, onde a constante API guarda a URL base do servidor. Escreva, DENTRO dela, o MÉTODO assíncrono removerJogoPeloId(id) — recebe o id (número/string) do jogo. O método deve: fazer fetch DELETE na rota `${API}/jogos/{id}`; se o status for 404, lançar new Error('Jogo não encontrado para remoção'); se !response.ok (qualquer outro erro), lançar new Error('Erro ao remover o jogo'). Não há retorno.",
+code:`const API = 'http://localhost:3000';
+
+export class ServicoJogos {
+  // async obterJogos(pesquisa) já existe...
+
+  // 👉 escreva aqui o método async removerJogoPeloId(id)
+}`,
 answer:`async removerJogoPeloId( id ) {
   const response = await fetch( \`\${API}/jogos/\${id}\`, { method: 'DELETE' } );
   if ( response.status == 404 ) {
@@ -2250,7 +2282,7 @@ exp:"DELETE recebe o id na URL via template literal. Verifica-se 404 primeiro (m
 
 // ── aula11: mvp_2_jogos — Controladora (Apresentador) ──
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[aula11 — Apresentador] Crie a ControladoraListagemJogos: importa ServicoJogos; no constructor recebe a visao e cria o servico; método async listar() que obtém os jogos e chama visao.desenharJogos, tratando erro com visao.mostrarErro.",
+text:"Crie a classe ControladoraListagemJogos (Apresentador do MVP). Ela recebe no constructor o objeto 'visao', que possui os métodos desenharJogos(jogos) e mostrarErro(erro). Use também a classe ServicoJogos (de './servico-jogos.js'), cujo método async obterJogos() devolve os jogos da API. A classe deve: importar ServicoJogos; no constructor, guardar a visao e criar 'this.servico = new ServicoJogos()'; ter um método async listar() que, num try, faz await this.servico.obterJogos() e passa o resultado para this.visao.desenharJogos(); no catch, chama this.visao.mostrarErro(erro).",
 answer:`import { ServicoJogos } from './servico-jogos.js';
 
 export class ControladoraListagemJogos {
@@ -2273,7 +2305,7 @@ exp:"O Apresentador orquestra: pede dados ao Serviço e manda a Visão desenhar.
 
 // ── aula11: mvp_2_jogos — Visão ──
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[aula11 — Visão MVP] Crie a VisaoListagemJogos: no constructor cria new ControladoraListagemJogos(this); em iniciar() chama controladora.listar() e registra o clique do botão 'pesquisar' (prevenindo o padrão) chamando controladora.pesquisar().",
+text:"Crie a classe VisaoListagemJogos (a Visão do MVP). Use a classe ControladoraListagemJogos (de './controladora-listagem-jogos.js'), que possui os métodos listar() e pesquisar(). A Visão deve: importar a Controladora; no constructor, criar 'this.controladora = new ControladoraListagemJogos(this)' passando a si mesma; ter um método iniciar() que chama this.controladora.listar() e registra um listener de clique no <button> de id 'pesquisar' que previne o padrão e chama this.controladora.pesquisar() (use arrow function para preservar o this).",
 answer:`import { ControladoraListagemJogos } from './controladora-listagem-jogos.js';
 
 export class VisaoListagemJogos {
@@ -2293,7 +2325,7 @@ keywords:["import","ControladoraListagemJogos","export class VisaoListagemJogos"
 exp:"No MVP a Visão é o ponto de entrada e cria o Apresentador passando 'this'. A arrow no listener preserva o this da Visão, permitindo chamar this.controladora.pesquisar()."},
 
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[aula11 — Visão] Escreva desenharJogos(jogos): seleciona o tbody, limpa com replaceChildren() e adiciona todas as linhas de uma vez com map(this.criarLinha.bind(this)).",
+text:"Dentro da classe Visão, escreva o MÉTODO desenharJogos(jogos), onde 'jogos' é um array de objetos. Suponha que a própria classe tem o método criarLinha(jogo), que devolve um <tr>. O método deve: selecionar o <tbody>; limpá-lo com replaceChildren(); e anexar de uma só vez todas as linhas, gerando-as com jogos.map(this.criarLinha.bind(this)) e espalhando o resultado com spread no tbody.append(...). (bind(this) é necessário para o this não se perder ao passar o método como callback.)",
 answer:`desenharJogos( jogos ) {
   const tbody = document.querySelector('tbody');
   tbody.replaceChildren();
@@ -2303,7 +2335,7 @@ keywords:["desenharJogos","querySelector","tbody","replaceChildren","jogos.map",
 exp:"replaceChildren() limpa o tbody. map gera as <tr> e o spread (...) as adiciona de uma só vez (um reflow). bind(this) é obrigatório ao passar this.criarLinha como callback, senão this se perde."},
 
 {topic:"MVC/MVP",diff:"medium",type:"code",
-text:"[aula11 — Visão] Escreva criarLinha({id,nome,nota,genero}) que cria um <tr> e anexa células (td via textContent) para id, nome, nota e genero. Inclua também o auxiliar criarCelula(valor).",
+text:"Dentro de uma classe Visão, escreva DOIS MÉTODOS que montam uma linha de tabela:\n\n1) criarCelula(valor) — método auxiliar que recebe 'valor' (o conteúdo de texto a exibir na célula). Ele cria um elemento <td>, coloca o valor em td.textContent (sem innerHTML) e RETORNA o <td>.\n\n2) criarLinha(jogo) — recebe um objeto 'jogo' que você deve desestruturar no parâmetro em { id, nome, nota, genero }. Ele cria um <tr>, anexa a ele quatro células chamando this.criarCelula(...) para id, nome, nota e genero (nessa ordem), e RETORNA o <tr>.",
 answer:`criarLinha( { id, nome, nota, genero } ) {
   const tr = document.createElement('tr');
   tr.append(
@@ -2324,7 +2356,7 @@ keywords:["criarLinha","{ id, nome, nota, genero }","createElement","tr.append",
 exp:"Desestruturação no parâmetro extrai as propriedades do jogo. criarCelula usa textContent (seguro, sem XSS) em vez de innerHTML. tr.append aceita vários nós de uma vez."},
 
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[aula11 — Visão] Escreva removerLinhaComId(id) que encontra o <tr> cujo <td data-id> é igual ao id e o remove do DOM, sem dar erro caso não exista.",
+text:"Dentro de uma classe Visão, escreva o MÉTODO removerLinhaComId(id), onde 'id' é o identificador do jogo. Cada linha da tabela tem uma célula <td data-id=\"...\"> com o id. O método deve encontrar o <tr> cuja célula tem aquele data-id e removê-lo do DOM, SEM lançar erro caso a linha não exista (use optional chaining ?.).",
 answer:`removerLinhaComId( id ) {
   const tr = document.querySelector( \`tbody tr td[data-id=\${id}]\` )?.parentElement;
   tr?.remove();
@@ -2345,7 +2377,7 @@ exp:"No MVC a Visão é passiva e expõe aoDispararSomar(cb). No MVP a Visão co
 
 // ── aula10: jogos com fetch + template (CRUD) ──
 {topic:"Async/Await",diff:"medium",type:"code",
-text:"[aula10 — Listagem] Escreva async listarJogos() que dentro de try chama consultarJogos() (await) e passa o resultado para desenharJogos(); no catch exibe alert(erro.message).",
+text:"Escreva a FUNÇÃO async listarJogos(). Suponha que existem: consultarJogos() — retorna uma Promise com o array de jogos; e desenharJogos(jogos) — exibe os jogos na tela. A função deve, dentro de um try, fazer 'const jogos = await consultarJogos()' e chamar desenharJogos(jogos); no catch, exibir alert(erro.message).",
 answer:`export async function listarJogos() {
   try {
     const jogos = await consultarJogos();
@@ -2377,7 +2409,7 @@ keywords:["async function cadastrarJogo","new Headers","Content-Type","applicati
 exp:"POST cria o recurso. O header Content-Type: application/json avisa o formato do corpo (JSON.stringify). O json-server retorna o jogo criado já com o id gerado — por isso o return await response.json()."},
 
 {topic:"Async/Await",diff:"medium",type:"code",
-text:"[aula10 — Cadastro] Escreva async novo() que dentro de try obtém os gêneros (await obterGeneros()), preenche o select e, por fim, abre o dialog com showModal(); no catch faz alert e return.",
+text:"Escreva a FUNÇÃO async novo() que prepara e abre o formulário de novo jogo. Suponha que existem: obterGeneros() — retorna uma Promise com a lista de gêneros; e preencherSelectGeneros(generos) — preenche o <select> da tela. A função deve, dentro de um try, fazer 'const generos = await obterGeneros()' e chamar preencherSelectGeneros(generos); no catch, fazer alert(erro.message) e return; e, ao final (fora do catch), abrir o <dialog> da página com showModal().",
 answer:`export async function novo() {
   try {
     const generos = await obterGeneros();
@@ -2392,7 +2424,7 @@ keywords:["async function novo","try","await obterGeneros","preencherSelectGener
 exp:"Primeiro busca os gêneros da API e preenche o <select>; só então abre o modal com showModal(). O return no catch impede abrir o dialog quando a busca falha."},
 
 {topic:"Async/Await",diff:"hard",type:"code",
-text:"[aula10 — Cadastro] Escreva async salvar(event): previne o padrão; valida o form com reportValidity (retorna se inválido); monta o objeto jogo {nome, nota:Number(...), genero}; e dentro de try chama await cadastrarJogo(jogo), tratando erro com alert.",
+text:"Escreva a FUNÇÃO async salvar(event) do cadastro de jogo. Suponha que existe cadastrarJogo(jogo) — envia o jogo à API (Promise). A função deve: prevenir o padrão; pegar o <form> e abortar com return se form.reportValidity() for false; montar o objeto jogo a partir dos inputs de ids 'nome', 'nota' (convertido com Number) e 'genero'; e, dentro de um try, fazer await cadastrarJogo(jogo); no catch, alert(erro.message).",
 answer:`export async function salvar( event ) {
   event.preventDefault();
   const form = document.querySelector('form');
@@ -2414,7 +2446,7 @@ keywords:["async function salvar","event.preventDefault","reportValidity","retur
 exp:"reportValidity() roda a validação nativa do HTML5 e aborta se inválido. Number() converte a nota (o input devolve string). O try/catch trata falhas do cadastro com alert."},
 
 {topic:"Async/Await",diff:"hard",type:"code",
-text:"[aula10 — Remoção] Escreva async remover(event): obtém o td de ações (event.target.parentElement) e seu dataset.id; pede confirmação com confirm(); se confirmado, dentro de try chama await removerJogoComId(id) e remove a linha (tdAcoes.parentElement.remove()).",
+text:"Escreva a FUNÇÃO async remover(event), chamada ao clicar no botão de remover de uma linha. O botão fica dentro de um <td data-id=\"...\"> (a célula de ações). Suponha que existe removerJogoComId(id) — remove o jogo na API (Promise). A função deve: obter a célula de ações com event.target.parentElement e ler o id em dataset.id; pedir confirmação com confirm(); se confirmado, num try, fazer await removerJogoComId(id) e remover a linha com tdAcoes.parentElement.remove(); no catch, alert(erro.message).",
 answer:`export async function remover( event ) {
   const tdAcoes = event.target.parentElement;
   const id = tdAcoes.dataset.id;
@@ -3296,7 +3328,7 @@ keywords:["export class Livro","#titulo","#preco","constructor( { titulo, preco 
 exp:"Espelha a classe Servico da prova: privados com #, constructor recebendo objeto desestruturado, getters e setters para cada atributo."},
 
 {topic:"Estilo Prova",diff:"medium",type:"code",
-text:"[Estilo Prova] Na classe Livro, escreva paraObjeto() (objeto simples titulo+preco) e a função buscarCadastro() que lê a chave 'Livros' e retorna [] se for null.",
+text:"Escreva duas coisas para um cadastro de livros (a classe Livro tem os atributos privados #titulo e #preco): (1) o MÉTODO paraObjeto(), que vai DENTRO da classe Livro e retorna um objeto simples { titulo, preco } a partir dos atributos privados; (2) a FUNÇÃO buscarCadastro(), que fica FORA da classe (export), lê o array da chave 'Livros' do localStorage e retorna [] se a chave não existir (valor null).",
 answer:`paraObjeto() {
   return { titulo: this.#titulo, preco: this.#preco };
 }
@@ -3357,7 +3389,7 @@ keywords:["JSON.parse( localStorage.getItem('carros') ) || []","createElement('u
 exp:"Padrão da prova atleta.js: map() cria as <li>, join('') concatena, innerHTML insere e append coloca a ul no body."},
 
 {topic:"Estilo Prova",diff:"medium",type:"code",
-text:"[Estilo Prova] Registre um 'dblclick' no documento que remove o <li> clicado: descobre o índice entre os irmãos, dá splice no array carros, atualiza o localStorage e remove o elemento.",
+text:"Escreva o registro de um listener de 'dblclick' no documento e a FUNÇÃO remover(event) que apaga o <li> em que o usuário deu duplo clique. Suponha que existe, em memória, o array carros (os mesmos itens da chave 'carros' do localStorage). A função deve: pegar o <li> clicado (event.target); descobrir o índice dele entre os irmãos (Array.from(li.parentNode.children).indexOf(li)); remover esse índice de carros com splice; atualizar o localStorage ('carros'); e remover o <li> do DOM.",
 answer:`document.addEventListener( 'dblclick', remover );
 
 function remover( event ) {
@@ -3408,7 +3440,7 @@ keywords:["function mediaDasNotas( notas )","let soma = 0","for ( const nota of 
 exp:"Variação da mediaDosNomes da prova: acumula com for..of e divide pelo total. A prova exigia for..of — map/reduce não pontuaria."},
 
 {topic:"Async/Await",diff:"medium",type:"code",
-text:"[Estilo Prova] Escreva async listarFilmes() que, dentro de try, faz await consultarFilmes() e passa o resultado a desenharFilmes(); no catch, faz alert(erro.message).",
+text:"Escreva a FUNÇÃO async listarFilmes(). Suponha que existem: consultarFilmes() — retorna uma Promise com o array de filmes; e desenharFilmes(filmes) — exibe os filmes na tela. A função deve, num try, fazer 'const filmes = await consultarFilmes()' e chamar desenharFilmes(filmes); no catch, fazer alert(erro.message).",
 answer:`async function listarFilmes() {
   try {
     const filmes = await consultarFilmes();
@@ -3421,7 +3453,7 @@ keywords:["async function listarFilmes()","try","await consultarFilmes()","desen
 exp:"await pausa até a consulta resolver. O try/catch trata erros de rede/HTTP relançados, exibindo a mensagem com alert."},
 
 {topic:"Estilo Prova",diff:"medium",type:"code",
-text:"[Estilo Prova] Na classe Livro, escreva problemas() que retorna um array: titulo entre 2 e 50 caracteres; preco numérico entre 10 e 1000.",
+text:"Considere a classe Livro, com os atributos privados #titulo e #preco. Escreva, DENTRO dela, o MÉTODO público problemas() — sem parâmetros, que NÃO lança exceção: monta e RETORNA um array de mensagens de erro (vazio se tudo certo). Adicione uma mensagem quando: #titulo tiver menos de 2 ou mais de 50 caracteres; #preco não for número (isNaN(Number(...))) ou for menor que 10 ou maior que 1000.",
 answer:`problemas() {
   let problema = [];
   if ( this.#titulo.length < 2 ) {
