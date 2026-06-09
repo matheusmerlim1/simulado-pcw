@@ -5,7 +5,6 @@
 //  - code: answer(referência), keywords[] (trechos obrigatórios)
 
 export const TOPICOS_META = {
-  "Introdução":      "História da web, Tim Berners-Lee, origem do JavaScript, Brendan Eich, motores JS (V8, SpiderMonkey) e motores de navegador.",
   "Tipos":           "Tipos primitivos (string, number, bigint, boolean, null, undefined, symbol), typeof, invólucros (wrappers) e comportamento de falsy values.",
   "Escopo":          "var vs let vs const, hoisting, modo estrito (use strict), objeto global vs escopo global, ES5 vs ES6+.",
   "DOM":             "querySelector, createElement, append, innerHTML, classList, replaceChildren, reflow e boas práticas de manipulação.",
@@ -28,41 +27,6 @@ export const TOPICOS_META = {
 };
 
 export const BANCO = [
-
-// ══════════════════ INTRODUÇÃO ══════════════════
-{topic:"Introdução",diff:"easy",type:"mc",
-text:"Em que ano Tim Berners-Lee criou o HTTP, o HTML, o primeiro servidor e o primeiro navegador web?",
-options:["1985","1990","1995","2000"],
-answer:1,
-exp:"Em 1990, no CERN. A primeira página pública foi http://info.cern.ch/hypertext/WWW/TheProject.html"},
-
-{topic:"Introdução",diff:"easy",type:"mc",
-text:"Quem criou o JavaScript e em quantos dias foi desenvolvida a linguagem?",
-options:["Tim Berners-Lee, 30 dias","Brendan Eich, 10 dias","Lars Bak, 7 dias","Brendan Eich, 30 dias"],
-answer:1,
-exp:"Brendan Eich (Netscape) criou em 10 dias. Nome inicial: Mocha. Em 1996, refatorou para o SpiderMonkey, ainda usado no Firefox."},
-
-{topic:"Introdução",diff:"easy",type:"mc",
-text:"Qual motor JavaScript é usado no Chrome, Edge e NodeJS?",
-options:["SpiderMonkey","JavaScriptCore","V8","Chakra"],
-answer:2,
-exp:"V8, criado em 2008 por Lars Bak. SpiderMonkey é do Firefox. JavaScriptCore é do Safari (WebKit)."},
-
-{topic:"Introdução",diff:"medium",type:"mc",
-text:"O que é um 'motor de navegador'?",
-options:["Componente que executa código JavaScript","Componente que transforma HTML/CSS em representação visual interativa na tela","Biblioteca para manipulação do DOM","Protocolo de comunicação entre cliente e servidor"],
-answer:1,
-exp:"O motor de navegador (browser engine) transforma documentos HTML e recursos em pixels interativos na tela. Exemplos: Blink (Chrome), Gecko (Firefox), WebKit (Safari)."},
-
-{topic:"Introdução",diff:"medium",type:"tf",
-text:"Assinale V para verdadeiro e F para falso sobre a história do JavaScript e da web.",
-statements:[
-  {text:"Tim Berners-Lee criou o HTTP, o HTML e o primeiro servidor web em 1990.",answer:true},
-  {text:"O nome original do JavaScript era Java, renomeado por questões de licença.",answer:false},
-  {text:"O motor V8 é usado tanto no Chrome quanto no NodeJS.",answer:true},
-  {text:"SpiderMonkey foi o primeiro motor JavaScript, criado por Brendan Eich em 1996.",answer:true}
-],
-exp:"O nome original era Mocha, não Java. JavaScript ganhou esse nome por marketing ('hype' do Java na época). V8 é usado em Chrome, Edge, NodeJS e Deno."},
 
 // ══════════════════ TIPOS ══════════════════
 {topic:"Tipos",diff:"easy",type:"mc",
@@ -706,40 +670,6 @@ answer:`tel.ddd
 tel['ddd']`,
 keywords:["tel.ddd","tel["],
 exp:"Propriedades podem ser acessadas com notação de ponto (tel.ddd) ou como array (tel['ddd']). A notação de array permite usar variáveis como chave."},
-
-// ══════════════════ INTRODUÇÃO (extra) ══════════════════
-{topic:"Introdução",diff:"medium",type:"mc",
-text:"O que é ECMAScript em relação ao JavaScript?",
-options:["São a mesma coisa, nomes diferentes para a mesma linguagem","ECMAScript é a especificação padronizada; JavaScript é a implementação da Netscape/Mozilla","ECMAScript é uma versão mais antiga do JavaScript","JavaScript é o nome oficial e ECMAScript é o apelido"],
-answer:1,
-exp:"ECMAScript é a especificação (norma) padronizada pela ECMA International. JavaScript é a implementação mais conhecida, criada pela Netscape. Outras implementações: JScript (IE) e ActionScript."},
-
-{topic:"Introdução",diff:"medium",type:"mc",
-text:"Em que versão do ECMAScript foram introduzidas classes, arrow functions, let, const e módulos?",
-options:["ES3","ES5","ES6 (ES2015)","ES7"],
-answer:2,
-exp:"O ES6 (ES2015) foi uma atualização massiva que introduziu: classes, arrow functions, let/const, módulos (import/export), template literals, destructuring, spread/rest, Promises e muito mais."},
-
-{topic:"Introdução",diff:"hard",type:"mc",
-text:"O processo de renderização de uma página web ocorre na seguinte ordem simplificada:",
-options:[
-  "Download HTML → Análise CSS → Análise HTML → Criação DOM → Renderização",
-  "Análise HTML → Criação DOM → Análise CSS → Criação CSSOM → Cálculo de layout → Desenho",
-  "Criação DOM → Download CSS → Análise HTML → Renderização",
-  "Download → Renderização → Análise → DOM"
-],
-answer:1,
-exp:"O processo: parsing HTML → DOM, parsing CSS → CSSOM, criação ARIAOM, cálculo e montagem do layout, definição de camadas/ordem, e finalmente o desenho (pixels). Manipular DOM com JS causa redesenho."},
-
-{topic:"Introdução",diff:"medium",type:"tf",
-text:"Assinale V ou F sobre a evolução do ECMAScript.",
-statements:[
-  {text:"O ES6 foi lançado em 2015 e também é chamado de ES2015.",answer:true},
-  {text:"async/await foi introduzido no ES6.",answer:false},
-  {text:"O operador de encadeamento opcional (?.) foi introduzido no ES11 (ES2020).",answer:true},
-  {text:"BigInt permite trabalhar com números inteiros de precisão arbitrária.",answer:true}
-],
-exp:"async/await foi introduzido no ES8 (ES2017), não no ES6. ?. (optional chaining) e ?? (nullish coalescing) são do ES2020. BigInt é do ES2020."},
 
 // ══════════════════ TIPOS (extra) ══════════════════
 {topic:"Tipos",diff:"hard",type:"mc",
@@ -1632,12 +1562,6 @@ options:["Model, View, Controller (Modelo, Visão, Controladora)","Module, Varia
 answer:0,
 exp:"MVC = Model (Modelo: regras de negócio/dados), View (Visão: interface/DOM) e Controller (Controladora: orquestra a interação). Separa responsabilidades para facilitar manutenção e testes."},
 
-{topic:"MVC/MVP",diff:"easy",type:"mc",
-text:"No projeto da calculadora em MVC, qual classe é o ponto de entrada e instancia as demais?",
-options:["A Visão (VisaoCalculadora)","A Controladora (ControladoraCalculo), que cria o Modelo e a Visão","O Modelo (Calculadora)","O arquivo index.html"],
-answer:1,
-exp:"No MVC do projeto, a Controladora é criada no index.js e, no seu constructor, instancia 'this.modelo = new Calculadora()' e 'this.visao = new VisaoCalculadora()'. Ela orquestra o fluxo."},
-
 {topic:"MVC/MVP",diff:"medium",type:"mc",
 text:"Qual a principal diferença entre MVC e MVP nos projetos da disciplina?",
 options:[
@@ -1648,23 +1572,6 @@ options:[
 ],
 answer:1,
 exp:"No MVC a Controladora é o centro: instancia a Visão e registra callbacks nela (aoDispararSomar(cb)). No MVP a Visão é o ponto de entrada: cria 'new ControladoraCalculo(this)' e chama 'this.controladora.somar()'. O Apresentador guarda a referência da Visão."},
-
-{topic:"MVC/MVP",diff:"medium",type:"mc",
-text:"No MVP (mvp_2_jogos), qual é o papel da classe ServicoJogos?",
-options:["É a Visão","É o Apresentador/Serviço que conversa com a API (fetch) — a camada de modelo/dados","É a Controladora de eventos","É o arquivo de configuração do json-server"],
-answer:1,
-exp:"O Serviço encapsula o acesso a dados (fetch para a API REST). A Controladora usa 'this.servico = new ServicoJogos()' e chama servico.obterJogos()/removerJogoPeloId(). Isola a regra de acesso a dados da Visão."},
-
-{topic:"MVC/MVP",diff:"hard",type:"mc",
-text:"No MVC, por que a Controladora registra o callback com 'this.visao.aoDispararSomar(this.somar.bind(this))'?",
-options:[
-  "Para deixar o código mais curto",
-  "Porque sem bind(this) o 'this' dentro de somar() perderia a referência da Controladora ao ser chamado como callback pela Visão",
-  "Porque a Visão exige funções anônimas",
-  "Porque bind é obrigatório em todo addEventListener"
-],
-answer:1,
-exp:"Ao passar um método como callback, ele é invocado sem o contexto do objeto — 'this' viraria undefined/elemento. bind(this) fixa a Controladora como 'this', permitindo acessar this.modelo e this.visao dentro de somar()."},
 
 {topic:"MVC/MVP",diff:"medium",type:"tf",
 text:"Assinale V ou F sobre MVC/MVP nos projetos da disciplina.",
@@ -2007,8 +1914,8 @@ exp:"reportValidity() dispara a validação nativa do HTML5 (required, min, max,
 // LOTE ADICIONAL — reforço de fundamentos
 // ══════════════════════════════════════════════════════════
 
-// ── INTRODUÇÃO / TIPOS ──
-{topic:"Introdução",diff:"easy",type:"mc",
+// ── DOM / TIPOS ──
+{topic:"DOM",diff:"easy",type:"mc",
 text:"O que significa a sigla DOM?",
 options:["Document Object Model","Data Object Manager","Dynamic Output Module","Document Oriented Markup"],
 answer:0,
@@ -2426,17 +2333,6 @@ keywords:["removerLinhaComId","querySelector","data-id","?.parentElement","tr?.r
 exp:"Seletor de atributo td[data-id=...] localiza a célula; ?.parentElement sobe para o <tr>. O optional chaining (?.) evita TypeError se nada for encontrado. tr?.remove() exclui a linha."},
 
 // ── aula11: MVC x MVP (conceito) ──
-{topic:"MVC/MVP",diff:"easy",type:"mc",
-text:"[aula11 — MVP] No MVP da calculadora, quem é o ponto de entrada que instancia o restante?",
-options:[
-  "A Controladora, que cria a Visão",
-  "A Visão: o index faz new VisaoCalculadora() e a Visão, no constructor, cria new ControladoraCalculo(this)",
-  "O Modelo Calculadora",
-  "O arquivo index.html"
-],
-answer:1,
-exp:"No MVP (mvp_1), index.js faz new VisaoCalculadora() e o constructor da Visão cria new ControladoraCalculo(this), passando a si mesma. No MVC (mvc_1) é a Controladora que cria a Visão."},
-
 {topic:"MVC/MVP",diff:"medium",type:"tf",
 text:"[aula11] Assinale V ou F sobre os projetos MVC/MVP.",
 statements:[
@@ -3875,5 +3771,329 @@ answer:`async function cadastrarFilme( filme ) {
 }`,
 keywords:["async function cadastrarFilme( filme )","await fetch( 'http://localhost:3000/filmes'","method: 'POST'","'Content-Type': 'application/json'","body: JSON.stringify( filme )","!response.ok","throw new Error","return response.json()"],
 exp:"POST cria o recurso. O header Content-Type avisa que o corpo é JSON (JSON.stringify). O json-server devolve o filme criado já com id — por isso o return response.json()."},
+
+// ══════════════════════════════════════════════════════════
+// MÚLTIPLA ESCOLHA PRÁTICA — saída de código e uso das funções
+// (espelha as questões de código já criadas no estilo da prova)
+// ══════════════════════════════════════════════════════════
+
+// ───────────────────── FÁCEIS ─────────────────────
+
+{topic:"Estilo Prova",diff:"easy",type:"mc",
+text:"Após ler um campo de formulário com .value, qual é o tipo do valor obtido?",
+code:`const v = document.getElementById('preco').value;`,
+options:['"number"','"string"','"object"','Depende do type do input'],
+answer:1,
+exp:"input.value SEMPRE retorna string, mesmo em <input type=\"number\">. Por isso usa-se Number(v) antes de comparar ou calcular."},
+
+{topic:"Arrays",diff:"easy",type:"mc",
+text:"Qual é o resultado da expressão abaixo?",
+code:`[10, 50, 100, 200].filter( n => n >= 100 )`,
+options:["[100, 200]","[10, 50]","[100]","[10, 50, 100, 200]"],
+answer:0,
+exp:"filter mantém apenas os elementos que passam no teste (>= 100): 100 e 200. Devolve um novo array sem alterar o original."},
+
+{topic:"Storage",diff:"easy",type:"mc",
+text:"O que retorna localStorage.getItem('x') se a chave 'x' nunca foi salva?",
+options:["undefined","null","'' (string vazia)","[]"],
+answer:1,
+exp:"getItem devolve null para chave inexistente. Por isso o padrão JSON.parse(getItem(...) || '[]') garante um array de fallback."},
+
+{topic:"Estilo Prova",diff:"easy",type:"mc",
+text:"No fluxo de cadastro da prova, para que serve cadastros.push(cadastro)?",
+options:["Salva direto no localStorage","Adiciona o objeto ao fim do array que está em memória","Valida o cadastro","Remove duplicatas"],
+answer:1,
+exp:"push() só adiciona ao array em memória. Persistir exige depois localStorage.setItem('chave', JSON.stringify(cadastros))."},
+
+{topic:"Classes",diff:"easy",type:"mc",
+text:"Qual declaração cria um atributo PRIVADO dentro de uma classe?",
+options:["private valor;","_valor;","#valor;","var valor;"],
+answer:2,
+exp:"O prefixo # define atributos privados (reais). _valor é apenas convenção, não privacidade. private não existe em JS."},
+
+{topic:"DOM",diff:"easy",type:"mc",
+text:"Para inserir texto numa célula <td> com segurança (sem interpretar HTML), usa-se:",
+options:["td.innerHTML = texto","td.textContent = texto","td.value = texto","td.append(htmlString)"],
+answer:1,
+exp:"textContent insere texto puro, sem risco de XSS. innerHTML interpretaria tags. Era o usado na listagem da prova."},
+
+{topic:"JSON",diff:"easy",type:"mc",
+text:"Por que chamar JSON.stringify(lista) antes de localStorage.setItem?",
+options:["Para ordenar a lista","Porque o localStorage só armazena strings","Para remover duplicatas","Para validar a lista"],
+answer:1,
+exp:"O storage guarda apenas strings. stringify serializa o array/objeto. Ao ler, JSON.parse desfaz a conversão."},
+
+{topic:"Eventos",diff:"easy",type:"mc",
+text:"O que faz event.preventDefault() como primeira linha de salvar(event)?",
+options:["Remove o listener","Impede o envio (submit) padrão do formulário","Para a propagação do evento aos pais","Limpa o formulário"],
+answer:1,
+exp:"preventDefault() cancela o comportamento padrão (recarregar a página ao enviar o form), permitindo tratar o salvamento por JavaScript."},
+
+{topic:"Arrays",diff:"easy",type:"mc",
+text:"Para gerar um NOVO array com os títulos de uma lista de livros, qual método usar?",
+options:["forEach","map","filter","find"],
+answer:1,
+exp:"map transforma cada elemento e devolve um novo array. forEach apenas executa, sem retornar array. filter seleciona; find devolve um único elemento."},
+
+{topic:"Tipos",diff:"easy",type:"mc",
+text:"Qual é o resultado de isNaN(Number('abc'))?",
+options:["true","false","NaN","Lança erro"],
+answer:0,
+exp:"Number('abc') é NaN (não numérico); isNaN(NaN) é true. Padrão de validação numérica da prova: isNaN(Number(valor))."},
+
+{topic:"DOM",diff:"easy",type:"mc",
+text:"Qual instrução cria um elemento <tr> em memória?",
+options:["document.querySelector('tr')","document.createElement('tr')","new Element('tr')","document.append('tr')"],
+answer:1,
+exp:"createElement('tr') cria o nó. Ele só aparece na tela após ser anexado (append) ao tbody. querySelector BUSCA um já existente."},
+
+{topic:"Storage",diff:"easy",type:"mc",
+text:"Qual é o objetivo do || '[]' na expressão abaixo?",
+code:`JSON.parse( localStorage.getItem('itens') || '[]' )`,
+options:["Ordenar os itens","Garantir um array vazio quando a chave não existe","Converter para número","Remover a chave"],
+answer:1,
+exp:"getItem devolve null se a chave não existe; o || '[]' fornece uma string JSON válida, e JSON.parse('[]') vira [] — evitando erro ao iterar."},
+
+{topic:"HTML/CSS",diff:"easy",type:"mc",
+text:"Qual atributo torna o preenchimento de um campo obrigatório para enviar o formulário?",
+options:["mandatory","required","min","needed"],
+answer:1,
+exp:"required impede o envio com o campo vazio e ativa a validação nativa do navegador (mostrada por reportValidity())."},
+
+{topic:"Eventos",diff:"easy",type:"mc",
+text:"O que faz form.reset()?",
+options:["Recarrega a página","Limpa (restaura) os campos do formulário","Envia o formulário","Remove o formulário do DOM"],
+answer:1,
+exp:"reset() devolve os campos aos valores iniciais (vazios). Costuma vir no fim de salvar(), após o cadastro dar certo."},
+
+{topic:"Arrays",diff:"easy",type:"mc",
+text:"Qual é o resultado de [1, 2, 3].filter(n => n > 9)?",
+options:["undefined","null","[]","false"],
+answer:2,
+exp:"filter devolve sempre um array — vazio [] quando nenhum elemento passa no teste. Nunca null nem undefined."},
+
+{topic:"Async/Await",diff:"easy",type:"mc",
+text:"Em const r = await fetch('/jogos'), o que r representa?",
+options:["O JSON já convertido","O objeto Response (a resposta HTTP)","Uma string","O array de jogos"],
+answer:1,
+exp:"fetch resolve com um objeto Response. Para obter os dados é preciso ainda chamar await r.json()."},
+
+{topic:"REST/HTTP",diff:"easy",type:"mc",
+text:"Como indicar que uma chamada fetch deve REMOVER um recurso?",
+options:["{ method: 'REMOVE' }","{ method: 'DELETE' }","{ delete: true }","fetch.delete()"],
+answer:1,
+exp:"O método HTTP de remoção é DELETE, passado nas opções: fetch(url, { method: 'DELETE' })."},
+
+{topic:"DOM",diff:"easy",type:"mc",
+text:"O que faz dialog.showModal()?",
+options:["Abre o dialog sem bloquear o fundo","Abre o dialog como modal, bloqueando o restante da página","Fecha o dialog","Cria um novo dialog"],
+answer:1,
+exp:"showModal() abre o <dialog> como modal (overlay, fecha com Esc). show() abriria sem bloquear; close() fecha."},
+
+// ───────────────────── MÉDIAS ─────────────────────
+
+{topic:"Arrays",diff:"medium",type:"mc",
+text:"Qual é a saída do código?",
+code:`console.log( ['a', 'bb', 'ccc'].map( s => s.length ) );`,
+options:["[1, 2, 3]","['a', 'bb', 'ccc']","6","[3]"],
+answer:0,
+exp:"map devolve um novo array com o length de cada string: 'a'→1, 'bb'→2, 'ccc'→3."},
+
+{topic:"Estilo Prova",diff:"medium",type:"mc",
+text:"Na classe Servico da prova, o que problemas() retorna quando os dados são VÁLIDOS?",
+options:["true","null","[] (array vazio)","undefined"],
+answer:2,
+exp:"problemas() acumula mensagens num array. Sem erros, devolve []. Quem chama testa problemas.length > 0 para decidir."},
+
+{topic:"Estilo Prova",diff:"medium",type:"mc",
+text:"Por que salvar paraObjeto() no localStorage em vez da própria instância da classe?",
+options:["É mais rápido","A instância perde métodos e atributos privados ao serializar; salva-se um objeto simples","Por segurança","O localStorage não aceita arrays"],
+answer:1,
+exp:"JSON.stringify de uma instância grava só os dados e perde o prototype/métodos. paraObjeto() devolve um objeto simples já pronto para persistir."},
+
+{topic:"Operadores",diff:"medium",type:"mc",
+text:"O que a instrução abaixo faz?",
+code:`const { nome, valor } = cadastro;`,
+options:["Cria um novo objeto","Extrai as propriedades nome e valor do objeto cadastro (desestruturação)","Compara nome e valor","Renomeia cadastro"],
+answer:1,
+exp:"Desestruturação de objeto: cria as constantes nome e valor com os valores das propriedades correspondentes de cadastro."},
+
+{topic:"JS Básico",diff:"medium",type:"mc",
+text:"O que é impresso pelo laço?",
+code:`for ( const x of ['a', 'b'] ) {
+  console.log( x );
+}`,
+options:["0 e 1","'a' e 'b'","['a', 'b']","undefined"],
+answer:1,
+exp:"for..of percorre os VALORES do array ('a', 'b'). Quem percorreria os índices (0, 1) seria for..in."},
+
+{topic:"Arrays",diff:"medium",type:"mc",
+text:"Qual é o resultado de [1, 2, 3, 4].reduce((acc, n) => acc + n, 0)?",
+options:["10","[1, 2, 3, 4]","24","0"],
+answer:0,
+exp:"reduce acumula: 0+1+2+3+4 = 10. O segundo argumento (0) é o valor inicial do acumulador."},
+
+{topic:"Promise/Fetch",diff:"medium",type:"mc",
+text:"O que response.json() retorna?",
+options:["O objeto JavaScript já pronto","Uma Promise que resolve com o objeto convertido","Uma string JSON","Um array sempre"],
+answer:1,
+exp:"response.json() devolve uma Promise — precisa de await ou .then(). Não é síncrono como JSON.parse()."},
+
+{topic:"Estilo Prova",diff:"medium",type:"mc",
+text:"Por que escrever Number(c.valor) no filtro abaixo, em vez de usar c.valor direto?",
+code:`cadastros.filter( c => Number( c.valor ) >= 100 )`,
+options:["Para arredondar","Porque c.valor é string (veio do input) e a comparação numérica exige conversão","Para remover casas decimais","Não faz diferença"],
+answer:1,
+exp:"Valores vindos de input.value são strings. Comparar string com número pode dar resultado errado; Number() converte antes de comparar."},
+
+{topic:"DOM",diff:"medium",type:"mc",
+text:"O que faz tbody.replaceChildren() chamado sem argumentos?",
+options:["Adiciona uma linha vazia","Remove todos os filhos do tbody","Clona o tbody","Substitui o tbody por outro"],
+answer:1,
+exp:"replaceChildren() sem argumentos esvazia o elemento. Muito usado para limpar a tabela antes de redesenhar a listagem."},
+
+{topic:"Async/Await",diff:"medium",type:"mc",
+text:"O que é impresso?",
+code:`async function f() { return 5; }
+f().then( v => console.log( v ) );`,
+options:["5","Promise","undefined","Error"],
+answer:0,
+exp:"Uma função async sempre retorna uma Promise; return 5 equivale a Promise.resolve(5). O .then recebe o valor resolvido (5)."},
+
+{topic:"Storage",diff:"medium",type:"mc",
+text:"O que fica realmente salvo na chave 'x'?",
+code:`localStorage.setItem('x', { a: 1 });`,
+options:["{ a: 1 }","'[object Object]'","'{\"a\":1}'","null"],
+answer:1,
+exp:"setItem converte o valor para string com toString(); um objeto vira '[object Object]'. Para salvar de verdade, use JSON.stringify({a:1})."},
+
+{topic:"Arrays",diff:"medium",type:"mc",
+text:"Qual é a saída do encadeamento?",
+code:`[1, 2, 3, 4].filter( n => n % 2 === 0 ).map( n => n * 10 )`,
+options:["[20, 40]","[2, 4]","[10, 20, 30, 40]","[20]"],
+answer:0,
+exp:"filter pega os pares [2,4]; map multiplica por 10 → [20,40]. Encadear filter().map() é o padrão da listagem da prova."},
+
+{topic:"Estilo Prova",diff:"medium",type:"mc",
+text:"Depois de chamar validar(), como salvar() decide que HÁ erros?",
+options:["if ( validacao === true )","if ( validacao.length > 0 )","if ( validacao )","if ( validacao.erro )"],
+answer:1,
+exp:"validar() devolve um array de mensagens. length > 0 indica que há erros — então exibe-se as mensagens e retorna-se cedo (return)."},
+
+{topic:"Eventos",diff:"medium",type:"mc",
+text:"Ao dar duplo clique num <li> da lista, o que é impresso?",
+code:`document.addEventListener('dblclick', e => console.log( e.target.tagName ));`,
+options:["'li'","'LI'","'UL'","undefined"],
+answer:1,
+exp:"e.target é o elemento clicado (o <li>); tagName devolve o nome da tag em MAIÚSCULAS: 'LI'."},
+
+{topic:"JS Básico",diff:"medium",type:"mc",
+text:"Depois do splice, qual é o conteúdo de a?",
+code:`const a = [10, 20, 30];
+a.splice( 1, 1 );`,
+options:["[10, 30]","[20, 30]","[10, 20]","[10, 20, 30]"],
+answer:0,
+exp:"splice(1, 1) remove 1 elemento a partir do índice 1 (o 20) e reindexa o array: [10, 30]. É o usado na remoção da prova."},
+
+{topic:"Promise/Fetch",diff:"medium",type:"mc",
+text:"Um fetch recebeu uma resposta com status 404. Qual o valor de response.ok?",
+options:["true","false","undefined","Lança erro automaticamente"],
+answer:1,
+exp:"fetch NÃO rejeita em 404/500 — a Promise resolve com response.ok = false. Por isso checa-se if(!response.ok) throw new Error(...)."},
+
+// ───────────────────── DIFÍCEIS ─────────────────────
+
+{topic:"Estilo Prova",diff:"hard",type:"mc",
+text:"Qual é a saída do console?",
+code:`const cadastros = [ {valor:'80'}, {valor:'150'}, {valor:'200'} ];
+const r = cadastros
+  .filter( c => Number(c.valor) >= 100 )
+  .map( c => Number(c.valor) );
+console.log( r );`,
+options:["[150, 200]","['150', '200']","[80, 150, 200]","[200]"],
+answer:0,
+exp:"filter mantém os com valor numérico >= 100 ('150','200'); map converte cada um com Number → [150, 200]."},
+
+{topic:"Classes",diff:"hard",type:"mc",
+text:"O que ocorre ao executar este código?",
+code:`class C {
+  #x = 1;
+  get x() { return this.#x; }
+}
+const c = new C();
+console.log( c.x );
+c.#x = 9;`,
+options:["Imprime 1 e altera para 9","Imprime 1 e depois dá erro: #x é privado, inacessível fora da classe","Erro nas duas linhas","Imprime undefined"],
+answer:1,
+exp:"c.x usa o getter e imprime 1. c.#x fora da classe lança SyntaxError — atributos # são estritamente privados."},
+
+{topic:"Operadores",diff:"hard",type:"mc",
+text:"Quais os valores de a e resto?",
+code:`const [ a, ...resto ] = [1, 2, 3, 4];`,
+options:["a = 1, resto = [2, 3, 4]","a = 1, resto = 2","a = [1], resto = [2, 3, 4]","a = 1, resto = {2, 3, 4}"],
+answer:0,
+exp:"Desestruturação com rest: a recebe o 1º elemento; ...resto coleta o restante num array [2, 3, 4]."},
+
+{topic:"Async/Await",diff:"hard",type:"mc",
+text:"Qual alternativa executa op1() e op2() em PARALELO?",
+options:[
+  "const a = await op1(); const b = await op2();",
+  "const [ a, b ] = await Promise.all( [op1(), op2()] );",
+  "async [a, b] = [ op1(), op2() ];",
+  "await op1(); await op2();"
+],
+answer:1,
+exp:"Dois await em sequência rodam uma de cada vez. Promise.all inicia ambas e aguarda as duas — tempo total = max(op1, op2)."},
+
+{topic:"Storage",diff:"hard",type:"mc",
+text:"A chave 'x' nunca foi salva. O que retorna a expressão?",
+code:`JSON.parse( localStorage.getItem('x') )`,
+options:["[]","null","Lança SyntaxError","undefined"],
+answer:1,
+exp:"getItem('x') é null; JSON.parse(null) devolve null (não erro). Por isso usa-se || '[]' ou um if(... == null) return []."},
+
+{topic:"Estilo Prova",diff:"hard",type:"mc",
+text:"Um Servico foi salvo com JSON.stringify e relido com JSON.parse. O objeto lido tem o método problemas()?",
+options:["Sim","Não — JSON.parse devolve um objeto simples, sem os métodos da classe","Sim, se usar JSON.stringify de novo","Apenas os getters"],
+answer:1,
+exp:"Serializar e desserializar preserva só os dados. O objeto recuperado é simples (sem prototype) — para usar problemas() seria preciso recriar new Servico(...)."},
+
+{topic:"DOM",diff:"hard",type:"mc",
+text:"O que acontece ao executar o código?",
+code:`const li = document.createElement('li');
+li.appendChild( 'texto' );`,
+options:["Adiciona 'texto' ao li","Lança erro: appendChild só aceita Node (use append, que aceita string)","Adiciona 'texto' como atributo","Não faz nada"],
+answer:1,
+exp:"appendChild exige um Node — passar string lança TypeError. append() aceita string diretamente; era a diferença cobrada na prova."},
+
+{topic:"Promise/Fetch",diff:"hard",type:"mc",
+text:"Um fetch resolveu uma resposta com status 500 e o código NÃO checou response.ok. O que ocorre?",
+options:["A Promise rejeita sozinha","O código segue como se tivesse dado certo (o erro 500 passa despercebido)","Lança automaticamente um erro 500","Retorna null"],
+answer:1,
+exp:"Sem checar response.ok, o 500 é tratado como sucesso e o código tenta usar dados inexistentes. Daí o padrão if(!response.ok) throw."},
+
+{topic:"Arrays",diff:"hard",type:"mc",
+text:"Qual é o retorno?",
+code:`['a', 'b', 'c'].findIndex( x => x === 'b' )`,
+options:["'b'","1","true","-1"],
+answer:1,
+exp:"findIndex devolve o ÍNDICE do primeiro elemento que passa no teste ('b' está na posição 1). find devolveria o próprio 'b'; -1 seria se não achasse."},
+
+{topic:"JS Básico",diff:"hard",type:"mc",
+text:"Qual é o resultado de Number('12px')?",
+options:["12","'12px'","NaN","undefined"],
+answer:2,
+exp:"Number exige que a string inteira seja numérica — 'px' invalida, retornando NaN. parseInt('12px') daria 12 (lê os dígitos iniciais)."},
+
+{topic:"Estilo Prova",diff:"hard",type:"mc",
+text:"Qual é a saída?",
+code:`let soma = 0;
+for ( const nome of ['Ana', 'Bia'] ) {
+  soma += nome.length;
+}
+console.log( soma );`,
+options:["6","2","['Ana', 'Bia']","7"],
+answer:0,
+exp:"for..of soma o length de cada nome: 'Ana'(3) + 'Bia'(3) = 6. Mesma lógica da questão mediaDosNomes da prova."},
 
 ];
