@@ -94,6 +94,7 @@ function ligarEventos() {
   document.getElementById('btn-next').addEventListener('click', proximaQuestao);
   document.getElementById('btn-check').addEventListener('click', () => visao.verificarCodigoAtual());
   document.getElementById('btn-quiz-home').addEventListener('click', voltarParaInicio);
+  document.getElementById('btn-quiz-home-bottom').addEventListener('click', voltarParaInicio);
   document.getElementById('btn-home').addEventListener('click', voltarParaInicio);
   document.getElementById('btn-retry').addEventListener('click', refazerSimulado);
   document.querySelector('.review-toggle').addEventListener('click', () => visao.alternarRevisao());
