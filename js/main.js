@@ -88,6 +88,11 @@ function ligarEventos() {
     const pilula = e.target.closest('.topic-pill');
     if (pilula) aplicarFiltro(() => quiz.alternarTopico(pilula.dataset.topic), true);
   });
+  // Marcar / limpar todos os tópicos de uma vez.
+  document.getElementById('btn-topics-all').addEventListener('click',
+    () => aplicarFiltro(() => quiz.selecionarTodosTopicos(), true));
+  document.getElementById('btn-topics-none').addEventListener('click',
+    () => aplicarFiltro(() => quiz.limparTopicos(), true));
 
   // Botões fixos.
   document.getElementById('btn-start').addEventListener('click', iniciarSimulado);

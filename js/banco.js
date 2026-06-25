@@ -25,7 +25,7 @@ export const TOPICOS_META = {
   "HTML/CSS":        "Revisão de HTML e CSS: estrutura de tabela (thead/tbody/tfoot), formulários (label/for, input, select), validação nativa (required, minlength, maxlength, min, max), <dialog>/showModal, <output>, <template> e seletores CSS.",
   "JSON":            "Formato JSON: JSON.stringify e JSON.parse, serialização de objetos, chaves entre aspas duplas, perda de métodos/prototype ao serializar e o padrão de leitura com fallback || '[]'.",
   "Prova 2026-1":    "★ Questões no formato da P2 2026-1: popular <select> com fetch SEM innerHTML, mostrar bandeira (img.src/alt + span.hidden) no evento change, cadastrar via fetch POST com JSON (preventDefault, response.ok), validar pelo form, e os V/F de promessas/HTTP/timers.",
-  "Async⇄Promise":   "★ Conversão nos dois sentidos entre async/await e .then()/.catch(): try/catch ⇄ catch(), await ⇄ then, encadeamento sequencial, Promise.all, finally e propagação de erros. 15 questões fácil→difícil.",
+  "Async⇄Promise":   "★ async/await e .then()/.catch(): conceitos, leitura de código e conversão nos dois sentidos (try/catch ⇄ catch, await ⇄ then, encadeamento sequencial, Promise.all, finally e propagação de erros). Discursivas e múltipla escolha, fácil→difícil.",
 };
 
 export const BANCO = [
@@ -4478,5 +4478,648 @@ answer:`function cadastrar(estado) {
 }`,
 keywords:["fetch('/estados'",".then(","!r.ok","throw new Error",".catch("],
 exp:"O await vira .then(); o if/throw vai dentro dele; o try/catch vira .catch() final, que devolve e.message — exatamente o fluxo do cadastro da prova, mas sem async/await."},
+
+// ══════════════════ ASYNC ⇄ PROMISE — +30 (conceitos, leitura e conversão) ══════════════════
+
+{topic:"Async⇄Promise",diff:"easy",type:"mc",
+text:"O que uma async function SEMPRE retorna?",
+options:["O valor de retorno diretamente, sem Promise","Uma Promise","undefined","Uma função callback"],
+answer:1,
+exp:"Toda async function retorna uma Promise. Mesmo um return 5 vira Promise.resolve(5); por isso dá para usar .then()/.catch() no resultado dela."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"mc",
+text:"Onde a palavra-chave await pode ser usada?",
+options:["Em qualquer função","Dentro de uma função async (ou no top-level de um módulo)","Apenas dentro de um try","Apenas em loops"],
+answer:1,
+exp:"await só funciona dentro de funções async (ou no top-level de módulos ESM). Usar await numa função comum é erro de sintaxe."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"mc",
+text:"Qual método encadeado em uma Promise trata os ERROS?",
+options:[".then()",".catch()",".finally()",".error()"],
+answer:1,
+exp:".catch() captura rejeições da cadeia. .then() trata o sucesso e .finally() roda sempre. .error() não existe em Promises."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"mc",
+text:"O que .finally() faz em uma cadeia de promessas?",
+options:["Roda apenas no sucesso","Roda apenas no erro","Roda SEMPRE, com sucesso ou erro","Cancela a Promise"],
+answer:2,
+exp:".finally() executa independentemente do resultado — ideal para limpeza (ex.: esconder um 'carregando'). É o equivalente ao finally do try/catch."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"mc",
+text:"Em `const x = await f()`, o que x recebe?",
+options:["A Promise retornada por f","O valor com que a Promise foi resolvida","Sempre undefined","Uma nova função"],
+answer:1,
+exp:"await 'desembrulha' a Promise: x recebe o VALOR resolvido, não a Promise. Sem await, x seria a própria Promise pendente."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"mc",
+text:"Qual a diferença entre Promise.all e Promise.race?",
+options:[
+  "São idênticos",
+  "all espera TODAS (e rejeita na 1ª rejeição); race resolve/rejeita assim que a 1ª promessa terminar",
+  "race espera todas; all pega só a primeira",
+  "Nenhum dos dois espera promessas"],
+answer:1,
+exp:"all aguarda todas resolverem (ou rejeita na primeira falha). race se decide pela PRIMEIRA promessa a mudar de estado, seja sucesso ou erro."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"mc",
+text:"Dada `async function f(){ throw new Error('x'); }`, como o erro chega a quem chamou f()?",
+options:["Lança um erro síncrono na hora da chamada","A Promise retornada é rejeitada (capturável com .catch ou try/await)","Nada acontece","Trava o navegador"],
+answer:1,
+exp:"throw dentro de async vira uma Promise REJEITADA. Quem chama captura com f().catch(...) ou com try/catch ao usar await f()."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"mc",
+text:"Qual é a saída?",
+code:`Promise.resolve(1)
+  .then(v => v + 1)
+  .then(v => console.log(v));`,
+options:["1","2","3","[object Promise]"],
+answer:1,
+exp:"O valor resolvido (1) passa pelo primeiro .then() virando 2; o segundo .then() apenas imprime 2. O retorno de um .then() alimenta o próximo."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"mc",
+text:"Como capturar um erro de `await fetch(...)` dentro de uma async function?",
+options:["Envolvendo o await em try/catch","Não é possível capturar","Apenas com .finally()","Com um if antes do await"],
+answer:0,
+exp:"Com async/await usa-se try/catch ao redor do await. (Com .then() seria um .catch() no fim da cadeia.)"},
+
+{topic:"Async⇄Promise",diff:"hard",type:"mc",
+text:"Qual a ordem das saídas?",
+code:`console.log('A');
+Promise.resolve().then(() => console.log('B'));
+console.log('C');`,
+options:["A B C","A C B","B A C","C B A"],
+answer:1,
+exp:"Código síncrono roda primeiro (A, C). O callback do .then() é uma microtask: só executa quando a pilha esvazia — por isso B sai por último."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"mc",
+text:"Fazer `await` em uma Promise REJEITADA, sem try/catch ao redor, causa o quê?",
+options:["Retorna undefined","Lança/propaga o erro (a async function é rejeitada)","Ignora silenciosamente","Tenta de novo automaticamente"],
+answer:1,
+exp:"await de uma rejeição relança o erro naquele ponto; sem try/catch, ele propaga e rejeita a Promise da própria async function."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"mc",
+text:"Dentro de uma async function que só faz `return await f();`, qual forma é equivalente?",
+options:["return f()","apenas f() sem return","Promise.resolve(f)","await sem return"],
+answer:0,
+exp:"Quando se apenas retorna o resultado, return await f() e return f() são equivalentes — a async function já embrulha o retorno numa Promise."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"mc",
+text:"O que acontece se o callback de um .then() RETORNA outra Promise?",
+options:["A cadeia espera essa Promise resolver e usa o valor dela","Retorna a Promise sem esperar","Gera erro","Vira código síncrono"],
+answer:0,
+exp:"O .then() 'achata' (flatten) a Promise retornada: o próximo .then() só roda depois que ela resolve, recebendo o valor dela."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"mc",
+text:"Você tem f1() e f2() independentes. Como rodá-las em PARALELO e esperar as duas?",
+options:["await f1(); await f2();","await Promise.all([f1(), f2()])","f1().then(f2)","Não é possível"],
+answer:1,
+exp:"await f1(); await f2(); é sequencial (uma espera a outra). Promise.all([f1(), f2()]) dispara as duas juntas e espera ambas — bem mais rápido."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"mc",
+text:"Para quais códigos de status HTTP response.ok é true?",
+options:["200–299","100–199","300–399","400–599"],
+answer:0,
+exp:"response.ok é true apenas na faixa 2xx (sucesso). Por isso o padrão if (!resp.ok) throw new Error(...) antes de ler o corpo."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"code",
+text:"[async → then] Converta para .then(), SEM async/await:\n\nasync function s() {\n  const d = await g();\n  return d.x;\n}",
+answer:`function s() {
+  return g().then(d => d.x);
+}`,
+keywords:["g().then(","d.x"],
+exp:"O await vira .then(); retornar d.x dentro dele faz a cadeia resolver com esse valor. Retornar a cadeia preserva o resultado."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"code",
+text:"[then → async] Converta para async/await:\n\nfunction s() {\n  return g().then(d => d.x);\n}",
+answer:`async function s() {
+  const d = await g();
+  return d.x;
+}`,
+keywords:["async","await g()",".x"],
+exp:"O .then(d => ...) vira const d = await g(); e o corpo retorna d.x normalmente."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"code",
+text:"Escreva uma async function `buscar(url)` que faz await fetch(url) e devolve o corpo já convertido em objeto (await resp.json()).",
+answer:`async function buscar(url) {
+  const resp = await fetch(url);
+  return await resp.json();
+}`,
+keywords:["async","await fetch(url)","resp.json()"],
+exp:"Dois awaits sequenciais: primeiro a resposta, depois o corpo em JSON. Lembre que .json() também devolve uma Promise."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[async → then] Converta para .then()/.catch(), SEM async/await:\n\nasync function w() {\n  try {\n    const a = await x();\n    console.log(a);\n  } catch (e) {\n    alert(e.message);\n  }\n}",
+answer:`function w() {
+  return x()
+    .then(a => console.log(a))
+    .catch(e => alert(e.message));
+}`,
+keywords:["x().then(","console.log",".catch(","alert("],
+exp:"O try/catch vira .catch() no fim: qualquer rejeição na cadeia cai nele."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[then → async] Converta para async/await com try/catch:\n\nfunction w() {\n  return x()\n    .then(a => console.log(a))\n    .catch(e => alert(e.message));\n}",
+answer:`async function w() {
+  try {
+    const a = await x();
+    console.log(a);
+  } catch (e) {
+    alert(e.message);
+  }
+}`,
+keywords:["async","try","await x()","console.log","catch","alert("],
+exp:"O .catch() final vira o bloco catch; o await fica dentro do try."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"Escreva o código que roda a() e b() em PARALELO, espera as duas com Promise.all e devolve a soma dos resultados (dentro de função async).",
+answer:`const [ra, rb] = await Promise.all([a(), b()]);
+return ra + rb;`,
+keywords:["await Promise.all","[ra, rb]","ra + rb"],
+exp:"Promise.all dispara as duas juntas; a desestruturação [ra, rb] pega os resultados na ordem do array."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[async → then] Converta para .then() encadeado, SEM async/await:\n\nasync function m() {\n  const a = await f1();\n  const b = await f2(a);\n  return f3(b);\n}",
+answer:`function m() {
+  return f1()
+    .then(a => f2(a))
+    .then(b => f3(b));
+}`,
+keywords:["f1()",".then(","f2(a)","f3(b)"],
+exp:"Cada await sequencial vira um .then() que recebe o resultado do anterior e o passa adiante."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[async → then] Reescreva sem async/await, devolvendo a Promise:\n\nasync function t() {\n  return await fetch('/x');\n}",
+answer:`function t() {
+  return fetch('/x');
+}`,
+keywords:["return fetch('/x')"],
+exp:"Como só se retorna o resultado, basta devolver a própria Promise do fetch. O await ali é desnecessário."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"code",
+text:"[then → async] Converta para async/await:\n\nfunction loadAll(ids) {\n  return Promise.all(ids.map(id => f(id)));\n}",
+answer:`async function loadAll(ids) {
+  return await Promise.all(ids.map(id => f(id)));
+}`,
+keywords:["async","await Promise.all","ids.map"],
+exp:"Promise.all com map continua igual — só ganha await. As chamadas f(id) seguem em paralelo."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"code",
+text:"[async → then] Converta para .then()/.catch()/.finally(), SEM async/await:\n\nasync function p() {\n  try {\n    const r = await f();\n    usar(r);\n  } catch (e) {\n    log(e);\n  } finally {\n    fim();\n  }\n}",
+answer:`function p() {
+  return f()
+    .then(r => usar(r))
+    .catch(e => log(e))
+    .finally(() => fim());
+}`,
+keywords:["f()",".then(",".catch(",".finally(","fim()"],
+exp:"try→.then(), catch→.catch(), finally→.finally(). O .finally() não recebe argumento porque roda independentemente do resultado."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"code",
+text:"Escreva uma async function `salvarTudo()` que tenta await salvar() e, se der erro, RELANÇA com a mensagem 'Falha ao salvar' (try/catch + throw).",
+answer:`async function salvarTudo() {
+  try {
+    await salvar();
+  } catch (e) {
+    throw new Error('Falha ao salvar');
+  }
+}`,
+keywords:["async","try","await salvar()","catch","throw new Error"],
+exp:"Capturar e relançar (throw new Error) permite trocar a mensagem por uma mais amigável, mantendo a falha propagando na Promise."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[async → then] Reescreva com .then() (sem async/await): obtenha os dados JSON de fetch(url) e faça console.log neles.",
+answer:`fetch(url)
+  .then(r => r.json())
+  .then(dados => console.log(dados));`,
+keywords:["fetch(url).then(","r.json()","console.log"],
+exp:"Dois passos encadeados: o primeiro .then() converte a resposta em JSON; o segundo recebe os dados já prontos."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"code",
+text:"Escreva uma Promise já resolvida com o número 42 (use Promise.resolve).",
+answer:`Promise.resolve(42)`,
+keywords:["Promise.resolve(42)"],
+exp:"Promise.resolve(valor) cria uma Promise imediatamente resolvida — útil como ponto de partida de cadeias (ex.: reduce sequencial)."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[async → then] Converta este handler para .then(), SEM async/await:\n\nasync function onChange() {\n  const r = await fetch(u);\n  const j = await r.json();\n  render(j);\n}",
+answer:`function onChange() {
+  return fetch(u)
+    .then(r => r.json())
+    .then(j => render(j));
+}`,
+keywords:["fetch(u).then(","r.json()","render(j)"],
+exp:"Cada await vira um .then(); o resultado de r.json() segue para o próximo .then(), que chama render."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"code",
+text:"[then → async] Converta para async/await (o .then() aninhado usa o valor anterior):\n\nfunction n() {\n  return a().then(x =>\n    b(x).then(y => x + y)\n  );\n}",
+answer:`async function n() {
+  const x = await a();
+  const y = await b(x);
+  return x + y;
+}`,
+keywords:["async","await a()","await b(x)","x + y"],
+exp:"O aninhamento existia só para manter x no escopo ao somar. Com await, x e y ficam em variáveis no mesmo escopo — fica linear."},
+
+// ══════════════════ MVC/MVP — +30 (conceitos e código, estilo prova) ══════════════════
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"No contexto da disciplina, o que significa a sigla MVP?",
+options:["Model-View-Presenter","Minimum Viable Product","Model-View-Provider","Most Valuable Pattern"],
+answer:0,
+exp:"Aqui MVP = Model-View-Presenter: Modelo (dados), Visão (DOM) e Apresentador (orquestra os dois)."},
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"No MVP, qual(is) camada(s) NÃO deve(m) manipular o DOM diretamente?",
+options:["A Visão","O Apresentador e o Modelo","Nenhuma camada","Todas as camadas"],
+answer:1,
+exp:"Só a Visão toca no DOM. O Apresentador coordena e o Modelo cuida dos dados — nenhum dos dois faz querySelector."},
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"No MVP, quem instancia/conhece quem?",
+options:[
+  "A Visão instancia o Apresentador, e o Apresentador conhece a Visão e o Modelo",
+  "O Modelo instancia a Visão",
+  "O HTML instancia todas as classes",
+  "O Modelo conhece a Visão"],
+answer:0,
+exp:"A Visão é o ponto de entrada e cria o Apresentador (passando this). O Apresentador guarda a Visão e cria/usa o Modelo. O Modelo não conhece ninguém acima."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"No padrão MVC, qual é o ponto de entrada da aplicação?",
+options:["A Controladora","A Visão","O Modelo","O CSS"],
+answer:0,
+exp:"No MVC a Controladora é o ponto de entrada e instancia Modelo e Visão. (No MVP esse papel de entrada é da Visão.)"},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Qual a diferença central entre MVC e MVP?",
+options:[
+  "No MVP a Visão é o ponto de entrada e cria o Apresentador (passando this); no MVC a Controladora entra e cria Modelo e Visão",
+  "São exatamente iguais",
+  "No MVP não existe Modelo",
+  "No MVC a Visão acessa o banco diretamente"],
+answer:0,
+exp:"Muda o ponto de entrada e quem cria quem: MVP parte da Visão (que cria o Apresentador); MVC parte da Controladora (que cria Modelo + Visão)."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"No MVP, em qual camada fica o acesso a dados (fetch/API)?",
+options:["Na Visão","No Modelo","No HTML","No CSS"],
+answer:1,
+exp:"O fetch pertence ao Modelo. Na prova o fetch estava na Visão e o professor anotou 'No Model'."},
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"No MVP, exibir uma mensagem de erro na tela é responsabilidade de quem?",
+options:["Da Visão (a pedido do Apresentador)","Do Modelo, que escreve direto na tela","Do navegador sozinho","De ninguém"],
+answer:0,
+exp:"O Apresentador captura o erro (try/catch ao usar o Modelo) e pede à Visão para exibir no <output>. Só a Visão mexe no DOM."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Por que a Visão passa `this` ao criar o Apresentador?",
+options:[
+  "Para o Apresentador poder chamar métodos da Visão (mostrar dados/erros)",
+  "Para validar os campos do formulário",
+  "Para aplicar o CSS",
+  "Para acessar o localStorage"],
+answer:0,
+exp:"Com a referência da Visão, o Apresentador manda a Visão atualizar a tela — sem ele próprio tocar no DOM."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Qual o principal benefício de usar MVP em vez de 'tudo em um arquivo só'?",
+options:["Separação de responsabilidades e testabilidade","Maior velocidade da rede","Melhor ranqueamento no Google","Arquivos menores no disco"],
+answer:0,
+exp:"MVP separa dados (Modelo), tela (Visão) e coordenação (Apresentador), tornando o código mais organizado e testável."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"No MVP, o Modelo deve importar a Visão?",
+options:["Não — o Modelo não conhece a Visão","Sim, sempre","Sim, mas só a interface","Apenas quando há erro"],
+answer:0,
+exp:"O fluxo de conhecimento vai da Visão → Apresentador → Modelo. O Modelo é independente: não importa nem conhece a Visão."},
+
+{topic:"MVC/MVP",diff:"hard",type:"mc",
+text:"Dentro do constructor da própria Visão aparece `this.visao = new ListagemView(this)`. Qual o bug?",
+options:[
+  "Recursão infinita: deveria instanciar o Apresentador, não a própria Visão",
+  "Não há bug",
+  "Falta a palavra async",
+  "Falta importar o CSS"],
+answer:0,
+exp:"A Visão criando outra Visão se chama recursivamente sem fim. O correto é new ApresentadorListagem(this). Esse foi um erro da prova."},
+
+{topic:"MVC/MVP",diff:"hard",type:"mc",
+text:"Num cadastro em MVP, ao clicar em Salvar, qual é o fluxo correto?",
+options:[
+  "Visão captura o evento → chama o Apresentador → Apresentador usa o Modelo → Apresentador pede à Visão exibir o resultado",
+  "A Visão faz tudo sozinha (valida, salva e mostra)",
+  "O Modelo captura o clique",
+  "O HTML processa o cadastro"],
+answer:0,
+exp:"A Visão só captura o evento e repassa; o Apresentador coordena (Modelo) e devolve à Visão o que exibir. Cada um no seu papel."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Ao receber os dados do Modelo, o que o Apresentador faz com eles?",
+options:["Chama um método da Visão para exibi-los","Retorna uma string de HTML pronta","Escreve direto no console","Salva no localStorage"],
+answer:0,
+exp:"O Apresentador não desenha nada: ele entrega os dados à Visão (ex.: visao.mostrarEstados(dados)), que monta o DOM."},
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"Em arquivos separados, como o Apresentador obtém acesso à classe do Modelo?",
+options:["import { Modelo } from './modelo.js'","Por uma variável global","Via fetch","Não acessa"],
+answer:0,
+exp:"Com ESM, cada classe é exportada do seu arquivo e importada onde é usada — por isso a prova pedia indicar o nome do arquivo em comentário."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"No MVP, onde deve ficar a lógica de negócio/validação dos dados?",
+options:["No Modelo (e/ou no Apresentador), nunca na Visão","Apenas na Visão","No arquivo HTML","No CSS"],
+answer:0,
+exp:"A Visão é 'burra' (só mostra). Regras e validações ficam no Modelo/Apresentador, mantendo a separação de responsabilidades."},
+
+{topic:"MVC/MVP",diff:"easy",type:"code",
+text:"Escreva uma classe de entidade `Estado` com campos privados #nome e #uf, que recebe {nome, uf} no constructor e tem um getter nome.",
+answer:`export class Estado {
+  #nome;
+  #uf;
+  constructor({ nome, uf }) {
+    this.#nome = nome;
+    this.#uf = uf;
+  }
+  get nome() {
+    return this.#nome;
+  }
+}`,
+keywords:["class Estado","#nome","constructor({","get nome()"],
+exp:"Campos privados (#) escondem o estado interno; o acesso de leitura é feito por getters. É a classe de dados (parte do Modelo)."},
+
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"Escreva o constructor do Apresentador: recebe `visao`, guarda em this.visao e cria o Modelo em this.modelo.",
+answer:`constructor(visao) {
+  this.visao = visao;
+  this.modelo = new ModeloEstados();
+}`,
+keywords:["constructor(visao)","this.visao = visao","new ModeloEstados()"],
+exp:"O Apresentador guarda a Visão (recebida) para poder atualizá-la, e instancia o Modelo para buscar dados."},
+
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"Escreva o método iniciar() da Visão que, no evento DOMContentLoaded, chama this.apresentador.iniciar().",
+answer:`iniciar() {
+  document.addEventListener('DOMContentLoaded',
+    () => this.apresentador.iniciar());
+}`,
+keywords:["iniciar()","DOMContentLoaded","this.apresentador.iniciar()"],
+exp:"A Visão espera o DOM existir e então delega ao Apresentador o início da lógica."},
+
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"Escreva o método async iniciar() do Apresentador: busca os estados no Modelo (await) e pede à Visão para mostrá-los; em erro, pede à Visão para mostrar a mensagem.",
+answer:`async iniciar() {
+  try {
+    const estados = await this.modelo.listar();
+    this.visao.mostrarEstados(estados);
+  } catch (erro) {
+    this.visao.mostrarErro(erro.message);
+  }
+}`,
+keywords:["async iniciar()","await this.modelo","this.visao.mostrarEstados","catch","mostrarErro"],
+exp:"O Apresentador orquestra: pega dados no Modelo e manda a Visão exibir; o try/catch trata falhas mostrando o erro na tela."},
+
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"Escreva o método async cadastrar(estado) do MODELO: POST de `estado` em '/estados' (JSON, cabeçalho correto) e lança erro se !resp.ok.",
+answer:`async cadastrar(estado) {
+  const resp = await fetch('/estados', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(estado)
+  });
+  if (!resp.ok) throw new Error('Erro ao cadastrar');
+}`,
+keywords:["async cadastrar(estado)","await fetch('/estados'","method: 'POST'","JSON.stringify(estado)","!resp.ok","throw new Error"],
+exp:"O Modelo encapsula a comunicação com a API: POST + Content-Type JSON + body com JSON.stringify, e sinaliza falha com throw."},
+
+{topic:"MVC/MVP",diff:"easy",type:"code",
+text:"Escreva o método mostrarErro(msg) da Visão, que escreve a mensagem no elemento <output>.",
+answer:`mostrarErro(msg) {
+  document.querySelector('output').textContent = msg;
+}`,
+keywords:["mostrarErro(msg)","querySelector('output')","textContent"],
+exp:"A Visão é quem mexe no DOM. O Apresentador apenas chama este método passando a mensagem capturada no catch."},
+
+{topic:"MVC/MVP",diff:"easy",type:"code",
+text:"Escreva o arquivo de entrada do MVP de cadastro: importe CadastroView de './cadastro-view.js', crie a visão e chame iniciar().",
+answer:`import { CadastroView } from './cadastro-view.js';
+const visao = new CadastroView();
+visao.iniciar();`,
+keywords:["import { CadastroView }","new CadastroView()","iniciar()"],
+exp:"A entrada apenas instancia a Visão e dispara iniciar(). No MVP, a própria Visão cria o Apresentador no seu constructor."},
+
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"Escreva um handler onSubmit(event) da Visão: dá preventDefault, monta {nome, uf} a partir dos inputs #nome e #uf e chama this.apresentador.cadastrar(dados).",
+answer:`onSubmit(event) {
+  event.preventDefault();
+  const dados = {
+    nome: document.querySelector('#nome').value,
+    uf: document.querySelector('#uf').value,
+  };
+  this.apresentador.cadastrar(dados);
+}`,
+keywords:["preventDefault()","querySelector('#nome')","this.apresentador.cadastrar(dados)"],
+exp:"A Visão captura o submit (com preventDefault), coleta os valores do DOM e repassa ao Apresentador — sem decidir nada sobre o cadastro."},
+
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"Escreva o método async cadastrar(dados) do APRESENTADOR: usa o Modelo (await) e pede à Visão mostrar sucesso ou erro.",
+answer:`async cadastrar(dados) {
+  try {
+    await this.modelo.cadastrar(dados);
+    this.visao.mostrarSucesso('Cadastrado!');
+  } catch (erro) {
+    this.visao.mostrarErro(erro.message);
+  }
+}`,
+keywords:["async cadastrar(dados)","await this.modelo.cadastrar","mostrarSucesso","catch","mostrarErro"],
+exp:"O Apresentador chama o Modelo dentro de try/catch e devolve à Visão o feedback (sucesso ou erro)."},
+
+{topic:"MVC/MVP",diff:"easy",type:"code",
+text:"Escreva o getter uf de uma classe que tem o campo privado #uf.",
+answer:`get uf() {
+  return this.#uf;
+}`,
+keywords:["get uf()","this.#uf"],
+exp:"Getters expõem leitura controlada de um campo privado, sem permitir escrita direta de fora da classe."},
+
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"Escreva a classe ModeloEstados com um método async listar() que busca '/estados', lança erro se !resp.ok e devolve um array de instâncias de Estado (use map).",
+answer:`export class ModeloEstados {
+  async listar() {
+    const resp = await fetch('/estados');
+    if (!resp.ok) throw new Error('Erro');
+    const dados = await resp.json();
+    return dados.map(d => new Estado(d));
+  }
+}`,
+keywords:["async listar()","await fetch('/estados')","resp.json()","map","new Estado(d)"],
+exp:"O Modelo transforma o JSON cru em objetos de domínio (instâncias de Estado) com map, devolvendo dados já prontos para a Visão."},
+
+{topic:"MVC/MVP",diff:"easy",type:"code",
+text:"Escreva o método limpar() da Visão que esvazia o <tbody> da tabela (sem innerHTML).",
+answer:`limpar() {
+  document.querySelector('tbody').replaceChildren();
+}`,
+keywords:["limpar()","querySelector('tbody')","replaceChildren()"],
+exp:"replaceChildren() sem argumentos remove todos os filhos — alternativa limpa ao innerHTML = '' (proibido na prova)."},
+
+{topic:"MVC/MVP",diff:"easy",type:"code",
+text:"Escreva a linha que importa a classe Estado do arquivo './modelo-estado.js'.",
+answer:`import { Estado } from './modelo-estado.js';`,
+keywords:["import { Estado }","from","modelo-estado.js"],
+exp:"Import nomeado: { Estado } deve casar com export class Estado no arquivo de origem."},
+
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"Escreva o método mostrarSucesso(msg) da Visão: escreve a msg no <output> e limpa o formulário.",
+answer:`mostrarSucesso(msg) {
+  document.querySelector('output').textContent = msg;
+  document.querySelector('form').reset();
+}`,
+keywords:["mostrarSucesso(msg)","textContent","reset()"],
+exp:"form.reset() devolve os campos ao estado inicial após um cadastro bem-sucedido — feedback claro ao usuário."},
+
+{topic:"MVC/MVP",diff:"hard",type:"code",
+text:"Escreva o método async buscarPorId(id) do Modelo: GET em '/estados/' + id, lança erro se !resp.ok e devolve o JSON.",
+answer:`async buscarPorId(id) {
+  const resp = await fetch('/estados/' + id);
+  if (!resp.ok) throw new Error('Não encontrado');
+  return await resp.json();
+}`,
+keywords:["async buscarPorId(id)","fetch('/estados/'","+ id","resp.json()"],
+exp:"O id entra na URL do recurso (REST: /estados/1). O Modelo concentra a montagem da URL e o tratamento da resposta."},
+
+// ══════════════════ MVC/MVP — "em qual camada fica?" (M / V / P) ══════════════════
+// Treino de separação de responsabilidades: dado um trecho, decida se é Modelo, Visão ou Apresentador.
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"Em um app MVP, o trecho abaixo deve ficar em qual camada?",
+code:`const resp = await fetch('https://p2.io/estados');
+const dados = await resp.json();`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","Pode ficar em qualquer camada"],
+answer:0,
+exp:"Acesso a dados / comunicação com a API é do MODELO. A Visão não faz fetch (erro da prova: o fetch estava na Visão → 'No Model')."},
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"Em um app MVP, o trecho abaixo deve ficar em qual camada?",
+code:`const tr = document.createElement('tr');
+tbody.append(tr);`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","No arquivo HTML"],
+answer:1,
+exp:"Criar e inserir elementos no DOM é responsabilidade da VISÃO — a única camada que toca na página."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Em um app MVP, o trecho abaixo deve ficar em qual camada?",
+code:`try {
+  const estados = await this.modelo.listar();
+  this.visao.mostrarEstados(estados);
+} catch (erro) {
+  this.visao.mostrarErro(erro.message);
+}`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","Modelo e Visão juntos"],
+answer:2,
+exp:"Coordenar Modelo e Visão (pedir dados, mandar exibir, tratar erro) é papel do APRESENTADOR. Note que ele chama métodos da Visão, mas não mexe no DOM."},
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"Em um app MVP de cadastro, capturar o submit do formulário com `event.preventDefault()` fica em qual camada?",
+code:`onSubmit(event) {
+  event.preventDefault();
+  this.apresentador.cadastrar(dados);
+}`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","No CSS"],
+answer:1,
+exp:"Eventos da interface (submit, change, click) são capturados pela VISÃO, que então repassa ao Apresentador. A Visão não decide o cadastro, só avisa."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Em um app MVP, transformar o JSON cru da API em objetos de domínio fica em qual camada?",
+code:`return dados.map(d => new Estado(d));`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","Pode ficar em qualquer camada"],
+answer:0,
+exp:"Montar as entidades (instâncias de Estado) a partir dos dados é do MODELO — ele entrega objetos prontos, não JSON cru."},
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"Em um app MVP, popular um <select> com <option> a partir de uma lista fica em qual camada?",
+code:`for (const pais of paises) {
+  const option = document.createElement('option');
+  option.value = pais.id;
+  option.textContent = pais.nome;
+  select.append(option);
+}`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","No arquivo HTML"],
+answer:1,
+exp:"Montar elementos da página (as <option> no <select>) é da VISÃO. Quem ENTREGOU a lista 'paises' foi o Apresentador/Modelo."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"No constructor de qual camada deve aparecer a linha abaixo?",
+code:`this.apresentador = new ApresentadorListagem(this);`,
+options:["No Modelo","Na Visão","No Apresentador","No arquivo de entrada (HTML)"],
+answer:1,
+exp:"É a VISÃO que cria o Apresentador, passando this. Fazer isso dentro do Apresentador (ou criar outra Visão aqui) quebra o padrão — erro visto na prova."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Decidir mostrar a mensagem de erro na tela quando o Modelo falha fica em qual camada?",
+code:`} catch (erro) {
+  this.visao.mostrarErro(erro.message);
+}`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","Ninguém trata"],
+answer:2,
+exp:"Quem DECIDE o que fazer com o erro é o APRESENTADOR (captura no try/catch). Quem EXIBE é a Visão. O Modelo só lança o erro."},
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"Em um app MVP, enviar o cadastro para a API (POST com JSON) fica em qual camada?",
+code:`await fetch('/estados', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(estado)
+});`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","No HTML"],
+answer:0,
+exp:"Qualquer comunicação com o servidor (GET, POST...) é do MODELO. Ele encapsula a API; o resto do app não sabe como ela funciona."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Em um app MVP, ligar um ouvinte de evento ao <select> fica em qual camada?",
+code:`select.addEventListener('change', () => this.onTrocaPais());`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","No CSS"],
+answer:1,
+exp:"Registrar listeners de elementos da página é da VISÃO. O que fazer em resposta pode ser delegado ao Apresentador, mas o addEventListener mora na Visão."},
+
+{topic:"MVC/MVP",diff:"hard",type:"mc",
+text:"Após o Modelo confirmar o cadastro, pedir à Visão que mostre 'Cadastrado!' fica em qual camada?",
+code:`await this.modelo.cadastrar(dados);
+this.visao.mostrarSucesso('Cadastrado!');`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","No arquivo HTML"],
+answer:2,
+exp:"O APRESENTADOR coordena: chama o Modelo e, com o resultado, manda a Visão exibir o feedback. Ele segura o fio entre as duas pontas."},
+
+{topic:"MVC/MVP",diff:"easy",type:"mc",
+text:"Em um app MVP, a classe abaixo (entidade com dados e getters) pertence a qual camada?",
+code:`export class Estado {
+  #nome; #uf;
+  constructor({ nome, uf }) { this.#nome = nome; this.#uf = uf; }
+  get nome() { return this.#nome; }
+}`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","Pode ficar em qualquer camada"],
+answer:0,
+exp:"A entidade de dados (Estado) faz parte do MODELO. Ela representa o domínio; não conhece tela nem coordenação."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Em um app MVP, exibir a bandeira (definir src e alt da <img>) fica em qual camada?",
+code:`img.src = \`https://flags.io/\${pais.code.toLowerCase()}.webp\`;
+img.alt = pais.name;`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","No HTML"],
+answer:1,
+exp:"Atualizar a <img> é mexer no DOM → VISÃO. Buscar qual é o país (nos dados) seria do Modelo/Apresentador; pintar na tela é da Visão."},
+
+{topic:"MVC/MVP",diff:"hard",type:"mc",
+text:"Receber os dados que a Visão coletou do formulário, mandar o Modelo salvar e devolver o resultado à Visão — essa COORDENAÇÃO fica em qual camada?",
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","No arquivo HTML"],
+answer:2,
+exp:"Esse 'meio de campo' entre Visão e Modelo é exatamente o papel do APRESENTADOR: nem coleta do DOM, nem fala com a API — ele orquestra."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Em um app MVP, verificar a resposta da API com `if (!resp.ok) throw new Error(...)` fica em qual camada?",
+code:`if (!resp.ok) throw new Error('Erro ao acessar os dados');`,
+options:["Modelo (Model)","Visão (View)","Apresentador (Presenter)","No CSS"],
+answer:0,
+exp:"O tratamento da resposta HTTP acompanha o fetch — logo, fica no MODELO. O Modelo lança o erro; o Apresentador o captura e a Visão o exibe."},
 
 ];

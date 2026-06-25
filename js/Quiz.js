@@ -77,6 +77,12 @@ export class Quiz {
     this.topicosSelecionados = new Set([topico]);
   }
 
+  /** Marca todos os tópicos disponíveis. */
+  selecionarTodosTopicos() { this.topicosSelecionados = new Set(this.#topicos); }
+
+  /** Desmarca todos os tópicos. */
+  limparTopicos() { this.topicosSelecionados = new Set(); }
+
   // ─────────────── Contadores (para a tela inicial) ───────────────
 
   contarPorDificuldade(d) { return this.#banco.filter((q) => q.diff === d).length; }
