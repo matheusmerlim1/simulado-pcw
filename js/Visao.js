@@ -37,6 +37,9 @@ export class Visao {
     this.#id('cnt-p1').textContent = q.contarPorProva('p1') + ' questões';
     this.#id('cnt-p2').textContent = q.contarPorProva('p2') + ' questões';
     this.#id('cnt-pf').textContent = q.contarPorProva('all') + ' questões';
+    this.#id('cnt-col-prova').textContent = q.contarPorTopico('Prova 2026-1') + ' questões';
+    this.#id('cnt-col-async').textContent = q.contarPorTopico('Async⇄Promise') + ' questões';
+    this.#id('cnt-col-mvp').textContent = q.contarPorTopico('MVC/MVP') + ' questões';
 
     const grade = this.#id('topics-grid');
     grade.replaceChildren();

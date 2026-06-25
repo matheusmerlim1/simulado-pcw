@@ -16,6 +16,13 @@ function iniciarSimulado() {
   visao.renderizarQuestao();
 }
 
+// Coleção especial: seleciona só aquele tópico e já inicia o simulado.
+function iniciarColecao(topico) {
+  quiz.selecionarTopicoExclusivo(topico);
+  visao.sincronizarSelecao();
+  iniciarSimulado();
+}
+
 // Selecionar uma prova apenas define o conteúdo; o usuário ainda pode ajustar
 // dificuldade/quantidade e só então clicar em "Iniciar Simulado".
 function selecionarProva(prova) {
@@ -59,6 +66,12 @@ function ligarEventos() {
   document.querySelector('.prova-grid').addEventListener('click', (e) => {
     const carta = e.target.closest('.prova-card');
     if (carta) selecionarProva(carta.dataset.prova);
+  });
+
+  // Coleções especiais (delegação): iniciam o simulado direto naquele tópico.
+  document.querySelector('.colecao-grid').addEventListener('click', (e) => {
+    const carta = e.target.closest('.colecao-card');
+    if (carta) iniciarColecao(carta.dataset.colecao);
   });
 
   // Filtros de dificuldade e tipo (preservam o preset de prova).

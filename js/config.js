@@ -14,7 +14,7 @@ const TOPICOS_P1 = new Set([
   'DOM', 'Eventos', 'Storage', 'Arrow Functions', 'Operadores', 'Classes',
   'Exceções', 'HTML/CSS',
 ]);
-const TOPICOS_P2 = new Set(['Promise/Fetch', 'Async/Await', 'REST/HTTP', 'MVC/MVP']);
+const TOPICOS_P2 = new Set(['Promise/Fetch', 'Async/Await', 'REST/HTTP', 'MVC/MVP', 'Prova 2026-1', 'Async⇄Promise']);
 
 const MARCADORES_P2 = /fetch|async|await|promise|\.then|controladora|apresentador|\bvisao\b|\bvisão\b|\bmvc\b|\bmvp\b/;
 

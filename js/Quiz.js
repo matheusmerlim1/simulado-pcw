@@ -69,6 +69,14 @@ export class Quiz {
     this.topicosSelecionados = this.topicosDaProva(prova);
   }
 
+  /** Seleciona um único tópico (coleção especial), com todas as dificuldades e tipos. */
+  selecionarTopicoExclusivo(topico) {
+    this.provaSelecionada = 'all';
+    this.dificuldades = new Set(DIFICULDADES);
+    this.tipos = new Set(TIPOS);
+    this.topicosSelecionados = new Set([topico]);
+  }
+
   // ─────────────── Contadores (para a tela inicial) ───────────────
 
   contarPorDificuldade(d) { return this.#banco.filter((q) => q.diff === d).length; }

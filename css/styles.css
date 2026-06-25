@@ -30,6 +30,17 @@ h1 .hl{color:var(--accent)}
 .prova-hint{font-size:11.5px;color:var(--text2);line-height:1.5;margin-bottom:16px;padding:9px 13px;border:1px dashed var(--border2);border-radius:6px}
 .prova-hint strong{color:var(--accent)}
 @media(max-width:600px){.prova-grid{grid-template-columns:1fr}}
+.colecao-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px}
+.colecao-card{display:flex;flex-direction:column;align-items:flex-start;text-align:left;border:1px solid var(--border);border-radius:9px;padding:16px;cursor:pointer;transition:all .15s;background:var(--surface);position:relative;overflow:hidden;color:inherit;font:inherit}
+.colecao-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .15s;background:linear-gradient(135deg,rgba(108,92,231,.12),transparent)}
+.colecao-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.colecao-card:hover::before{opacity:1}
+.colecao-icon{font-size:20px;margin-bottom:8px}
+.colecao-name{font-size:15px;font-weight:800;margin-bottom:6px;letter-spacing:-.02em}
+.colecao-desc{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:9px}
+.colecao-desc em{color:var(--accent);font-style:normal}
+.colecao-count{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:auto}
+@media(max-width:600px){.colecao-grid{grid-template-columns:1fr}}
 .diff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .diff-card{border:1px solid var(--border);border-radius:8px;padding:18px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;background:var(--surface)}
 .diff-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .15s}

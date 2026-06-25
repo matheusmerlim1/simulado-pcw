@@ -24,6 +24,8 @@ export const TOPICOS_META = {
   "Estilo Prova":    "★ Questões no formato exato das provas: exceção de validação (Q1), classe com #privados + validar (Q2a), cadastro+localStorage (Q2b), listagem DOM map/filter (Q3), completar lacunas (Q5).",
   "HTML/CSS":        "Revisão de HTML e CSS: estrutura de tabela (thead/tbody/tfoot), formulários (label/for, input, select), validação nativa (required, minlength, maxlength, min, max), <dialog>/showModal, <output>, <template> e seletores CSS.",
   "JSON":            "Formato JSON: JSON.stringify e JSON.parse, serialização de objetos, chaves entre aspas duplas, perda de métodos/prototype ao serializar e o padrão de leitura com fallback || '[]'.",
+  "Prova 2026-1":    "★ Questões no formato da P2 2026-1: popular <select> com fetch SEM innerHTML, mostrar bandeira (img.src/alt + span.hidden) no evento change, cadastrar via fetch POST com JSON (preventDefault, response.ok), validar pelo form, e os V/F de promessas/HTTP/timers.",
+  "Async⇄Promise":   "★ Conversão nos dois sentidos entre async/await e .then()/.catch(): try/catch ⇄ catch(), await ⇄ then, encadeamento sequencial, Promise.all, finally e propagação de erros. 15 questões fácil→difícil.",
 };
 
 export const BANCO = [
@@ -4127,5 +4129,354 @@ console.log( soma );`,
 options:["6","2","['Ana', 'Bia']","7"],
 answer:0,
 exp:"for..of soma o length de cada nome: 'Ana'(3) + 'Bia'(3) = 6. Mesma lógica da questão mediaDosNomes da prova."},
+
+// ══════════════════ PROVA 2026-1 (temas da P2 corrigida) ══════════════════
+// Cenário comum: app em https://p2.io com API REST. countries.io/json -> [{code,name}];
+// flags.io/<código-minúsculo>.webp -> bandeira; /paises -> [{id,nome}]; /estados (POST) cadastra estado.
+
+{topic:"Prova 2026-1",diff:"easy",type:"mc",
+text:"Você precisa adicionar uma <option> a um <select> SEM usar innerHTML. Qual é a forma correta?",
+options:[
+  "select.innerHTML += '<option>' + nome + '</option>'",
+  "const o = document.createElement('option'); o.textContent = nome; select.append(o)",
+  "select.value = nome",
+  "select.options = nome"],
+answer:1,
+exp:"Cria-se o elemento com createElement, define-se o texto e adiciona-se com append. innerHTML era proibido na prova; .value e .options não criam itens."},
+
+{topic:"Prova 2026-1",diff:"easy",type:"code",
+text:"A variável `pais` vale {id:1, nome:\"Brasil\"} e existe um <select> em `select`. Escreva o código que cria uma <option> com value = pais.id e texto = pais.nome e a adiciona ao select (SEM innerHTML).",
+answer:`const option = document.createElement('option');
+option.value = pais.id;
+option.textContent = pais.nome;
+select.append(option);`,
+keywords:["createElement('option')","option.value","option.textContent","append"],
+exp:"Erro comum na prova: definir option.dataset.id mas esquecer option.value. O value é o que vai no corpo do cadastro do estado."},
+
+{topic:"Prova 2026-1",diff:"medium",type:"mc",
+text:"Um <span hidden> contém a <img> da bandeira. Quando um país é escolhido, como você REVELA esse span?",
+options:[
+  "span.showModal()  — método de <dialog>, não de <span>",
+  "span.hidden = false  (ou span.removeAttribute('hidden'))",
+  "span.open = true",
+  "span.style.display = 'hidden'"],
+answer:1,
+exp:"Para um <span>, basta span.hidden = false. showModal()/open só existem em <dialog>. Na prova foi usado span.showModal(), que não funciona em <span>."},
+
+{topic:"Prova 2026-1",diff:"medium",type:"mc",
+text:"Qual evento dispara quando o usuário muda o valor de um <select>?",
+options:["'click'","'submit'","'change'","'hover'"],
+answer:2,
+exp:"O evento 'change' dispara quando o valor do <select> muda — é onde se atualiza a bandeira: select.addEventListener('change', mostrarBandeira)."},
+
+{topic:"Prova 2026-1",diff:"medium",type:"code",
+text:"O objeto `pais` vale {code:\"BR\", name:\"Brasil\"} e existe uma <img> em `img`. As bandeiras ficam em https://flags.io/<código-em-minúsculas>.webp. Escreva as duas linhas que definem o src da bandeira e o alt com o NOME do país.",
+answer:`img.src = \`https://flags.io/\${pais.code.toLowerCase()}.webp\`;
+img.alt = pais.name;`,
+keywords:["img.src","toLowerCase()",".webp","img.alt"],
+exp:"O código vai em minúsculas (toLowerCase) e o alt recebe o NOME do país (pais.name), como pedia o item b da prova."},
+
+{topic:"Prova 2026-1",diff:"easy",type:"mc",
+text:"Dentro de um handler de SUBMIT de formulário (registrado com addEventListener), o que impede o recarregamento da página?",
+options:["return false","event.preventDefault()","event.stopPropagation()","event.cancel()"],
+answer:1,
+exp:"event.preventDefault() impede o envio padrão que recarrega a página. Faltou isso na prova: a função cadastrar() não recebia event nem chamava preventDefault()."},
+
+{topic:"Prova 2026-1",diff:"medium",type:"code",
+text:"Existe o objeto `estado` = {nome, uf, pais}. Dentro de uma função async, escreva a chamada fetch que faz POST de `estado` em JSON para 'https://p2.io/estados', com o cabeçalho correto.",
+answer:`const resp = await fetch('https://p2.io/estados', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(estado)
+});`,
+keywords:["await fetch","method:'post'","content-type","application/json","JSON.stringify(estado)"],
+exp:"POST + headers Content-Type: application/json + body com JSON.stringify do objeto. É o coração do item c da prova."},
+
+{topic:"Prova 2026-1",diff:"medium",type:"mc",
+text:"Depois de `const resp = await fetch(url)`, como você verifica se a requisição teve sucesso ANTES de ler o corpo?",
+options:["if (resp.success)","if (resp.ok)","if (resp.status === 'ok')","if (resp.json())"],
+answer:1,
+exp:"response.ok é true para status 200–299. Padrão: if (!resp.ok) throw new Error('...'); só então await resp.json()."},
+
+{topic:"Prova 2026-1",diff:"easy",type:"code",
+text:"A resposta de um fetch está em `resp`. Dentro de uma função async, escreva a linha que transforma o corpo da resposta em objeto JavaScript.",
+answer:`const dados = await resp.json();`,
+keywords:["await","resp.json()"],
+exp:"resp.json() devolve uma Promise — por isso precisa de await. Esquecer o await em .json() foi um erro recorrente na prova."},
+
+{topic:"Prova 2026-1",diff:"medium",type:"mc",
+text:"O professor recomendou validar os campos do cadastro \"pelo form\". Qual recurso NATIVO faz essa validação?",
+options:[
+  "Comparar tamanhos com if e regex manualmente em JS",
+  "Atributos HTML (required, minlength, maxlength) + form.checkValidity()/reportValidity()",
+  "JSON.parse no corpo do formulário",
+  "Um alert() pedindo para o usuário conferir"],
+answer:1,
+exp:"A validação nativa usa required/minlength/maxlength no HTML; em JS, form.checkValidity() testa e reportValidity() mostra as mensagens. Faltou validar o tamanho dos campos na prova."},
+
+{topic:"Prova 2026-1",diff:"hard",type:"code",
+text:"Esta arrow tem um erro de sintaxe (return em corpo conciso): `.then( x => return f2(x) )`. Reescreva a chamada .then corrigindo o erro, mantendo o retorno de f2(x).",
+answer:`.then( x => f2(x) )`,
+keywords:[".then(","f2(x)"],
+exp:"Em arrow de corpo conciso (sem chaves) NÃO se usa return — o valor já é retornado. Use x => f2(x), ou com chaves x => { return f2(x); }. Esse foi o único erro da Q3 na prova."},
+
+{topic:"Prova 2026-1",diff:"hard",type:"code",
+text:"Existe `paises` = [{id,nome}, ...] e um <select> em `select`. Escreva um laço for...of que cria uma <option> para cada país (value = id, texto = nome) e a adiciona ao select.",
+answer:`for (const pais of paises) {
+  const option = document.createElement('option');
+  option.value = pais.id;
+  option.textContent = pais.nome;
+  select.append(option);
+}`,
+keywords:["for","of paises","createElement('option')","option.value","append"],
+exp:"for...of percorre o array; para cada item cria a option e adiciona com append. Cuidado: é for...of, não for...in nem for...for."},
+
+{topic:"Prova 2026-1",diff:"medium",type:"tf",
+text:"Marque V ou F sobre os conceitos cobrados na P2 2026-1.",
+statements:[
+  {text:"Promise.race() espera TODAS as promessas terminarem antes de resolver.",answer:false},
+  {text:"O status HTTP 500 indica um erro interno do servidor.",answer:true},
+  {text:"É possível usar .then() e .catch() sobre o retorno de uma async function.",answer:true},
+  {text:"setTimeout() executa o callback uma única vez; setInterval() executa repetidamente.",answer:true}
+],
+exp:"race() resolve/rejeita na PRIMEIRA promessa (quem espera todas é all/allSettled). 500 = erro do servidor. async function retorna Promise, então aceita then/catch. setTimeout = uma vez; setInterval = repetido."},
+
+{topic:"Prova 2026-1",diff:"hard",type:"tf",
+text:"Marque V ou F (os V/F mais difíceis da P2 2026-1).",
+statements:[
+  {text:"Em <script async>, os arquivos executam na ordem em que foram declarados.",answer:false},
+  {text:"Um .then() colocado após um .catch() funciona exatamente como o bloco finally.",answer:false},
+  {text:"Chamar .bind() em uma arrow function altera o valor de this dela.",answer:false},
+  {text:"Um <button> dentro de um <form method=\"dialog\"> fecha o <dialog> ao ser acionado.",answer:true}
+],
+exp:"async executa fora de ordem (quem mantém a ordem é defer). finally executa SEMPRE; then após catch só no fluxo de sucesso. arrow tem this léxico: bind não muda. Form method=dialog fecha o <dialog> ao submeter."},
+
+// ══════════════════ MVC/MVP — discursivas extras (estilo prova) ══════════════════
+
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"No padrão MVP, escreva a linha que vai DENTRO do constructor da Visão e cria o Apresentador, passando a própria visão (this) para ele.",
+answer:`this.apresentador = new ApresentadorListagem(this);`,
+keywords:["new","(this)"],
+exp:"No MVP a Visão é o ponto de entrada e instancia o Apresentador passando this. Na prova foi feito new ListagemView(this) (recursivo!) por engano — deveria ser o Apresentador."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Qual a diferença central entre MVC e MVP quanto ao ponto de entrada?",
+options:[
+  "No MVC a Controladora é o ponto de entrada e instancia Modelo e Visão; no MVP a Visão é o ponto de entrada e instancia o Apresentador (passando this)",
+  "São idênticos, só muda o nome da terceira camada",
+  "No MVP não existe Modelo",
+  "No MVC a Visão acessa o banco diretamente"],
+answer:0,
+exp:"No MVC a Controladora entra e cria Modelo+Visão. No MVP a Visão entra e cria o Apresentador, passando this — o Apresentador conversa com o Modelo e devolve à Visão."},
+
+{topic:"MVC/MVP",diff:"medium",type:"code",
+text:"Escreva o método async listar() do MODELO que busca os estados em 'https://p2.io/estados', lança Error se a resposta não for ok, e devolve o JSON.",
+answer:`async listar() {
+  const resp = await fetch('https://p2.io/estados');
+  if (!resp.ok) throw new Error('Erro ao acessar os dados');
+  return await resp.json();
+}`,
+keywords:["async listar()","await fetch","!resp.ok","throw new Error","resp.json()"],
+exp:"O acesso a dados (fetch) pertence ao MODELO, não à Visão. Na prova esse fetch estava na Visão e o professor anotou 'No Model'."},
+
+{topic:"MVC/MVP",diff:"easy",type:"code",
+text:"Escreva o conteúdo do arquivo de entrada listagem.js: importe ListagemView de './listagem-view.js', crie a visão e chame iniciar().",
+answer:`import { ListagemView } from './listagem-view.js';
+const visao = new ListagemView();
+visao.iniciar();`,
+keywords:["import","new ListagemView()","iniciar()"],
+exp:"O arquivo de entrada apenas instancia a Visão e dispara iniciar(). No MVP, é a Visão que, ao ser criada, instancia o Apresentador."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"Por que, no MVP, o Apresentador recebe a Visão no seu constructor?",
+options:[
+  "Para poder pedir à Visão que atualize o DOM (mostrar os dados ou os erros)",
+  "Para validar o tamanho dos campos",
+  "Para acessar o localStorage",
+  "Para gerar o HTML da página"],
+answer:0,
+exp:"O Apresentador busca dados no Modelo e, com a referência à Visão, manda a Visão exibir resultados ou erros. Assim a Visão não acessa dados e o Apresentador não mexe no DOM diretamente."},
+
+{topic:"MVC/MVP",diff:"hard",type:"code",
+text:"Na VISÃO, escreva o método mostrarEstados(estados) que, para cada estado {id,nome,uf}, cria um <tr> com três <td> (id, nome, uf) e o adiciona ao <tbody> — SEM innerHTML.",
+answer:`mostrarEstados(estados) {
+  const tbody = document.querySelector('tbody');
+  tbody.replaceChildren();
+  for (const e of estados) {
+    const tr = document.createElement('tr');
+    for (const valor of [e.id, e.nome, e.uf]) {
+      const td = document.createElement('td');
+      td.textContent = valor;
+      tr.append(td);
+    }
+    tbody.append(tr);
+  }
+}`,
+keywords:["createElement('tr')","createElement('td')","textContent","append"],
+exp:"Cria o <td>, DEPOIS define o texto (td.textContent = valor) e adiciona. Na prova houve const td = createElement('td').innerText = ... que guarda a string, não o elemento."},
+
+{topic:"MVC/MVP",diff:"medium",type:"mc",
+text:"No MVP, onde os erros (ex.: falha de comunicação com o servidor) devem ser tratados e exibidos?",
+options:[
+  "O Apresentador captura o erro (try/catch ao chamar o Modelo) e pede à Visão para exibi-lo no <output>",
+  "O Modelo escreve direto no <output>",
+  "A Visão faz o fetch e trata o erro sozinha",
+  "Os erros são ignorados"],
+answer:0,
+exp:"O Apresentador orquestra: chama o Modelo dentro de try/catch e, no catch, manda a Visão exibir a mensagem no <output>. O Modelo só lança o erro; a Visão só mexe no DOM."},
+
+// ══════════════════ ASYNC ⇄ PROMISE — 15 conversões discursivas ══════════════════
+
+{topic:"Async⇄Promise",diff:"easy",type:"code",
+text:"[async → then] Converta para .then(), SEM async/await:\n\nasync function a() {\n  const x = await f();\n  console.log(x);\n}",
+answer:`function a() {
+  return f().then(x => console.log(x));
+}`,
+keywords:["f().then(","console.log"],
+exp:"Cada await vira um .then() que recebe o valor resolvido. Retorne a cadeia para que quem chamar possa esperar por ela."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"code",
+text:"[then → async] Converta para async/await:\n\nfunction a() {\n  return f().then(x => console.log(x));\n}",
+answer:`async function a() {
+  const x = await f();
+  console.log(x);
+}`,
+keywords:["async","await f()","console.log"],
+exp:"O .then(x => ...) vira const x = await f(); e o corpo segue normalmente. Marque a função como async."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"code",
+text:"[async → then] Converta para .then(), SEM async/await:\n\nasync function g() {\n  return await f();\n}",
+answer:`function g() {
+  return f();
+}`,
+keywords:["return f()"],
+exp:"Quando só se faz return await f(), basta retornar a própria Promise: return f(). O await ali é redundante."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"code",
+text:"[then → async] Converta para async/await:\n\nfunction h() {\n  return fetch(url).then(r => r.json());\n}",
+answer:`async function h() {
+  const r = await fetch(url);
+  return await r.json();
+}`,
+keywords:["async","await fetch(url)","r.json()"],
+exp:"Cada .then() encadeado vira um await sequencial: primeiro await fetch, depois await r.json()."},
+
+{topic:"Async⇄Promise",diff:"easy",type:"code",
+text:"[async → then] Converta para funções e promessas, SEM async/await:\n\nasync function mostrar() {\n  const valor = await f1();\n  const valor2 = await f2(valor);\n  console.log(valor2);\n}",
+answer:`function mostrar() {
+  return f1()
+    .then(valor => f2(valor))
+    .then(valor2 => console.log(valor2));
+}`,
+keywords:["f1()",".then(","f2(",".then("],
+exp:"Dois awaits sequenciais viram dois .then() encadeados. Retornar f2(valor) dentro do primeiro .then() faz a cadeia esperar por ele (igual à Q3 da prova, mas sem o catch)."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[async → then] Converta para .then()/.catch(), SEM async/await:\n\nasync function m() {\n  try {\n    const x = await f();\n    console.log(x);\n  } catch (e) {\n    console.error(e.message);\n  }\n}",
+answer:`function m() {
+  return f()
+    .then(x => console.log(x))
+    .catch(e => console.error(e.message));
+}`,
+keywords:["f().then(","console.log",".catch(","console.error"],
+exp:"O try/catch vira .catch() no FIM da cadeia: qualquer rejeição em qualquer .then() anterior cai nele."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[then → async] Converta para async/await com try/catch:\n\nfunction m() {\n  return f()\n    .then(x => console.log(x))\n    .catch(e => console.error(e.message));\n}",
+answer:`async function m() {
+  try {
+    const x = await f();
+    console.log(x);
+  } catch (e) {
+    console.error(e.message);
+  }
+}`,
+keywords:["async","try","await f()","console.log","catch","console.error"],
+exp:"O .catch() final vira o bloco catch do try/await. Todos os awaits ficam dentro do try."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[async → then] Converta para .then(), SEM async/await:\n\nasync function m() {\n  const a = await f1();\n  const b = await f2(a);\n  return b;\n}",
+answer:`function m() {
+  return f1().then(a => f2(a));
+}`,
+keywords:["f1().then(","f2(a)"],
+exp:"f1 resolve em a; retornar f2(a) dentro do .then() faz a cadeia resolver com b. Retornar a cadeia preserva o valor final."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[then → async] Converta para async/await:\n\nfunction m() {\n  return f1()\n    .then(a => f2(a))\n    .then(b => f3(b));\n}",
+answer:`async function m() {
+  const a = await f1();
+  const b = await f2(a);
+  return await f3(b);
+}`,
+keywords:["async","await f1()","await f2(a)","f3(b)"],
+exp:"Cada .then() vira um await sequencial, encadeando o resultado de um no próximo. O último valor é retornado."},
+
+{topic:"Async⇄Promise",diff:"medium",type:"code",
+text:"[async → then] Converta para .then()/.catch(), SEM async/await:\n\nasync function load() {\n  const r = await fetch(url);\n  if (!r.ok) throw new Error('falhou');\n  return await r.json();\n}",
+answer:`function load() {
+  return fetch(url)
+    .then(r => {
+      if (!r.ok) throw new Error('falhou');
+      return r.json();
+    });
+}`,
+keywords:["fetch(url)",".then(","!r.ok","throw new Error","r.json()"],
+exp:"O if/throw vai DENTRO do .then() (com chaves, por isso usa return). Lançar dentro do .then() rejeita a cadeia, como o throw fazia no async."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"code",
+text:"[then → async] Converta para async/await:\n\nfunction p() {\n  return Promise.all([f1(), f2()])\n    .then(([a, b]) => a + b);\n}",
+answer:`async function p() {
+  const [a, b] = await Promise.all([f1(), f2()]);
+  return a + b;
+}`,
+keywords:["async","await Promise.all","[a, b]","a + b"],
+exp:"Promise.all continua igual; só o .then(([a,b]) => ...) vira const [a,b] = await Promise.all(...). f1 e f2 continuam rodando em paralelo."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"code",
+text:"[async → then] Converta para .then()/.catch()/.finally(), SEM async/await:\n\nasync function x() {\n  try {\n    await f();\n  } catch (e) {\n    log(e);\n  } finally {\n    done();\n  }\n}",
+answer:`function x() {
+  return f()
+    .catch(e => log(e))
+    .finally(() => done());
+}`,
+keywords:["f()",".catch(","log(e)",".finally(","done()"],
+exp:"O catch vira .catch() e o finally vira .finally(). .finally() roda SEMPRE, com ou sem erro — por isso não recebe argumento."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"code",
+text:"[async → then] Converta este laço sequencial para uma CADEIA de promessas (sem async/await), acumulando os resultados em ordem:\n\nasync function all(ids) {\n  const out = [];\n  for (const id of ids) {\n    out.push(await f(id));\n  }\n  return out;\n}",
+answer:`function all(ids) {
+  return ids.reduce(
+    (cadeia, id) => cadeia.then(out =>
+      f(id).then(r => [...out, r])
+    ),
+    Promise.resolve([])
+  );
+}`,
+keywords:["reduce","Promise.resolve",".then(","f(id)"],
+exp:"Sem await, a sequência se constrói com reduce sobre uma cadeia que parte de Promise.resolve([]): cada passo espera a anterior, chama f(id) e concatena o resultado."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"code",
+text:"[then → async] Converta para async/await (note o .then aninhado que usa o valor anterior):\n\nfunction n() {\n  return f1().then(a =>\n    f2(a).then(b => a + b)\n  );\n}",
+answer:`async function n() {
+  const a = await f1();
+  const b = await f2(a);
+  return a + b;
+}`,
+keywords:["async","await f1()","await f2(a)","a + b"],
+exp:"O aninhamento de .then() existia para manter 'a' no escopo ao calcular a+b. Com await, ambos ficam em variáveis no mesmo escopo — fica linear e legível."},
+
+{topic:"Async⇄Promise",diff:"hard",type:"code",
+text:"[async → then] Converta para .then()/.catch(), SEM async/await. A função recebe `estado` e devolve a mensagem final:\n\nasync function cadastrar(estado) {\n  try {\n    const r = await fetch('/estados', { method: 'POST', body: JSON.stringify(estado) });\n    if (!r.ok) throw new Error('erro');\n    return 'ok';\n  } catch (e) {\n    return e.message;\n  }\n}",
+answer:`function cadastrar(estado) {
+  return fetch('/estados', { method: 'POST', body: JSON.stringify(estado) })
+    .then(r => {
+      if (!r.ok) throw new Error('erro');
+      return 'ok';
+    })
+    .catch(e => e.message);
+}`,
+keywords:["fetch('/estados'",".then(","!r.ok","throw new Error",".catch("],
+exp:"O await vira .then(); o if/throw vai dentro dele; o try/catch vira .catch() final, que devolve e.message — exatamente o fluxo do cadastro da prova, mas sem async/await."},
 
 ];
