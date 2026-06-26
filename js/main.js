@@ -36,6 +36,12 @@ function proximaQuestao() {
   else visao.renderizarResultados();
 }
 
+// Pular: marca a questão como não contabilizada e avança.
+function pularQuestao() {
+  if (!visao.pularAtual()) return; // já respondida → use "Próxima questão"
+  proximaQuestao();
+}
+
 function voltarParaInicio() {
   quiz.resetarSelecao();
   visao.mostrarPlacar(false);
@@ -97,6 +103,7 @@ function ligarEventos() {
   // Botões fixos.
   document.getElementById('btn-start').addEventListener('click', iniciarSimulado);
   document.getElementById('btn-next').addEventListener('click', proximaQuestao);
+  document.getElementById('btn-skip').addEventListener('click', pularQuestao);
   document.getElementById('btn-check').addEventListener('click', () => visao.verificarCodigoAtual());
   document.getElementById('btn-quiz-home').addEventListener('click', voltarParaInicio);
   document.getElementById('btn-quiz-home-bottom').addEventListener('click', voltarParaInicio);

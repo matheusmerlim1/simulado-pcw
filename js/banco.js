@@ -1622,7 +1622,7 @@ keywords:["export class Calculadora","somar","Number","isNaN","throw new Error",
 exp:"O Modelo concentra a regra de negócio (validar e somar) e NÃO toca no DOM. Number() converte; isNaN() detecta entrada inválida; throw delega o tratamento à Controladora via try/catch."},
 
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"Crie a classe ControladoraCalculo (Apresentador do MVP). Use a classe Calculadora (de './calculadora.js'), cujo método somar(n1, n2) devolve a soma ou lança Error. Ela recebe no constructor o objeto 'visao', que tem os métodos obterNumero1(), obterNumero2(), mostrarResultado(valor) e mostrarErro(erro). A classe deve: importar Calculadora; no constructor, guardar a visao e criar 'this.modelo = new Calculadora()'; ter o método somar (como ARROW function, para fixar o this) que lê n1 e n2 da visao e, num try, chama this.modelo.somar(n1, n2) e passa o resultado a this.visao.mostrarResultado(); no catch, chama this.visao.mostrarErro(erro).",
+text:"Crie a classe ControladoraCalculo (Apresentador do MVP). Importe Calculadora de './calculadora.js'. No constructor (recebe visao): crie this.modelo = new Calculadora() e guarde this.visao. Crie o método somar como ARROW function (para fixar o this): lê n1 e n2 via this.visao.obterNumero1()/obterNumero2(); num try, chama this.modelo.somar(n1, n2) e passa o resultado a this.visao.mostrarResultado(); no catch, chama this.visao.mostrarErro(erro).",
 answer:`import { Calculadora } from './calculadora.js';
 
 export class ControladoraCalculo {
@@ -2246,7 +2246,7 @@ exp:"setItem só grava strings — JSON.stringify(lista) serializa o array. Para
 
 // ── aula11: mvp_2_jogos — Serviço (acesso à API) ──
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[aula11 — Serviço] Crie a classe ServicoJogos (ESM) com o método async obterJogos(pesquisa): faz GET na rota /jogos usando o filtro do json-server nome:contains com a pesquisa (ou '' se vazia); lança Error se !response.ok; retorna o JSON.",
+text:"[aula11 — Serviço] No arquivo do serviço, declare a constante API = 'http://localhost:3000' (URL base do servidor). Crie a classe ServicoJogos (ESM) com o método async obterJogos(pesquisa): faz GET em `${API}/jogos` usando o filtro do json-server nome:contains com a pesquisa (ou '' se vazia); lança Error se !response.ok; retorna o JSON.",
 answer:`const API = 'http://localhost:3000';
 
 export class ServicoJogos {
@@ -2284,7 +2284,7 @@ exp:"DELETE recebe o id na URL via template literal. Verifica-se 404 primeiro (m
 
 // ── aula11: mvp_2_jogos — Controladora (Apresentador) ──
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"Crie a classe ControladoraListagemJogos (Apresentador do MVP). Ela recebe no constructor o objeto 'visao', que possui os métodos desenharJogos(jogos) e mostrarErro(erro). Use também a classe ServicoJogos (de './servico-jogos.js'), cujo método async obterJogos() devolve os jogos da API. A classe deve: importar ServicoJogos; no constructor, guardar a visao e criar 'this.servico = new ServicoJogos()'; ter um método async listar() que, num try, faz await this.servico.obterJogos() e passa o resultado para this.visao.desenharJogos(); no catch, chama this.visao.mostrarErro(erro).",
+text:"Crie a classe ControladoraListagemJogos (Apresentador do MVP). Importe ServicoJogos de './servico-jogos.js'. No constructor (recebe visao): guarde a visao e crie this.servico = new ServicoJogos(). No método async listar(): num try, faça await this.servico.obterJogos() e passe o resultado a this.visao.desenharJogos(); no catch(erro), chame this.visao.mostrarErro(erro).",
 answer:`import { ServicoJogos } from './servico-jogos.js';
 
 export class ControladoraListagemJogos {
@@ -2935,7 +2935,7 @@ keywords:["obterNumero1()","getElementById('n1').value","mostrarResultado( r )",
 exp:"A Visão concentra o acesso ao DOM: lê entradas (value) e escreve saídas (textContent). O Modelo e a Controladora nunca tocam no DOM — chamam esses métodos."},
 
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[Controladora MVC] No constructor, crie o Modelo e a Visão e registre o callback: this.visao.aoDispararSomar(this.somar.bind(this)).",
+text:"[Controladora MVC] No constructor, crie o Modelo (classe Calculadora) e a Visão (classe VisaoCalculadora) e registre o callback: this.visao.aoDispararSomar(this.somar.bind(this)).",
 answer:`constructor() {
   this.modelo = new Calculadora();
   this.visao = new VisaoCalculadora();
@@ -3693,7 +3693,7 @@ keywords:["async function remover( event )","event.target.parentElement","tdAcoe
 exp:"event.target é o botão; parentElement é o <td data-id>. Após remover na API (await), o <tr> é tirado do DOM — mantendo dados e tela sincronizados."},
 
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[Estilo Prova — Serviço] Crie a classe ServicoFilmes (ESM) com async obterFilmes() (GET /filmes, lança Error se !response.ok, retorna JSON) e async removerFilme(id) (DELETE /filmes/{id}, 404 = 'Filme não encontrado', outros erros = 'Erro ao remover').",
+text:"[Estilo Prova — Serviço] No arquivo do serviço, declare a constante API = 'http://localhost:3000' (URL base) e crie a classe ServicoFilmes (ESM) com: async obterFilmes() — GET em `${API}/filmes`, lança Error se !response.ok, retorna o JSON; e async removerFilme(id) — DELETE em `${API}/filmes/{id}`, status 404 lança 'Filme não encontrado', outros erros lançam 'Erro ao remover'.",
 answer:`const API = 'http://localhost:3000';
 
 export class ServicoFilmes {
@@ -3719,7 +3719,7 @@ keywords:["export class ServicoFilmes","async obterFilmes()","await fetch","${AP
 exp:"O Serviço isola o acesso à API. fetch não rejeita em 404/500 — checa-se response.ok/status. DELETE recebe o id na URL via template literal."},
 
 {topic:"MVC/MVP",diff:"hard",type:"code",
-text:"[Estilo Prova — Apresentador] Crie a ControladoraFilmes: importa ServicoFilmes; constructor recebe a visao e cria o servico; async listar() que obtém os filmes e chama visao.desenhar, tratando erro com visao.mostrarErro.",
+text:"[Estilo Prova — Apresentador] Crie a ControladoraFilmes (Apresentador). Importe ServicoFilmes de './servico-filmes.js' (que tem o método obterFilmes()). No constructor (recebe visao): crie this.servico = new ServicoFilmes() e guarde this.visao. O método async listar() faz await this.servico.obterFilmes() e chama this.visao.desenhar(filmes); em erro (catch), chama this.visao.mostrarErro(erro).",
 answer:`import { ServicoFilmes } from './servico-filmes.js';
 
 export class ControladoraFilmes {
@@ -3741,7 +3741,7 @@ keywords:["import { ServicoFilmes } from './servico-filmes.js'","export class Co
 exp:"O Apresentador pede dados ao Serviço e manda a Visão desenhar. O try/catch encaminha sucesso (desenhar) ou erro (mostrarErro) à Visão, sem o Serviço tocar no DOM."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
-text:"[Estilo Prova completa] Crie 'cadastro.js' completo (importa validar): no DOMContentLoaded registra o clique do botão em salvar; salvar(event) lê nome/peso/altura, monta cadastro, chama validar; se houver erros mostra <p> no output, senão faz push no array 'cadastro' e form.reset().",
+text:"[Estilo Prova completa] Crie 'cadastro.js' completo (importe validar de './validacao.js'): no DOMContentLoaded registra o clique do botão em salvar; salvar(event) lê nome/peso/altura, monta cadastro, chama validar; se houver erros mostra <p> no output, senão faz push no array salvo na chave 'cadastro' do localStorage e form.reset().",
 answer:`import { validar } from './validacao.js';
 
 document.addEventListener( 'DOMContentLoaded', () => {
@@ -3769,7 +3769,7 @@ function salvar( event ) {
     document.querySelector('form').reset();
   }
 }`,
-keywords:["import { validar } from './validacao.js'","addEventListener( 'DOMContentLoaded'","querySelector('button').addEventListener('click', salvar)","function salvar( event )","event.preventDefault()","const cadastro = { nome, peso, altura }","validar( cadastro )","if ( validacao.length > 0 )","<p>","${v}","output.innerHTML = texto","JSON.parse( localStorage.getItem('cadastro') ) || []","cadastros.push( cadastro )","localStorage.setItem( 'cadastro'","querySelector('form').reset()"],
+keywords:["import { validar }","addEventListener( 'DOMContentLoaded'","addEventListener('click', salvar)","function salvar( event )","event.preventDefault()","validar(",".length > 0","<p>","output.innerHTML","JSON.parse( localStorage.getItem('cadastro')",".push(","localStorage.setItem( 'cadastro'",".reset()"],
 exp:"Reprodução fiel do cadastro.js da prova 2024-2: DOMContentLoaded, leitura do DOM, validar() externo, erros em <p> via innerHTML ou push+setItem+reset."},
 
 {topic:"Estilo Prova",diff:"hard",type:"code",
@@ -4849,7 +4849,7 @@ keywords:["class Estado","#nome","constructor({","get nome()"],
 exp:"Campos privados (#) escondem o estado interno; o acesso de leitura é feito por getters. É a classe de dados (parte do Modelo)."},
 
 {topic:"MVC/MVP",diff:"medium",type:"code",
-text:"Escreva o constructor do Apresentador: recebe `visao`, guarda em this.visao e cria o Modelo em this.modelo.",
+text:"Escreva o constructor do Apresentador: recebe `visao`, guarda em this.visao e cria o Modelo (classe ModeloEstados) em this.modelo.",
 answer:`constructor(visao) {
   this.visao = visao;
   this.modelo = new ModeloEstados();
@@ -4867,7 +4867,7 @@ keywords:["iniciar()","DOMContentLoaded","this.apresentador.iniciar()"],
 exp:"A Visão espera o DOM existir e então delega ao Apresentador o início da lógica."},
 
 {topic:"MVC/MVP",diff:"medium",type:"code",
-text:"Escreva o método async iniciar() do Apresentador: busca os estados no Modelo (await) e pede à Visão para mostrá-los; em erro, pede à Visão para mostrar a mensagem.",
+text:"Escreva o método async iniciar() do Apresentador: faz await this.modelo.listar() e passa o resultado para this.visao.mostrarEstados(); em erro (catch), chama this.visao.mostrarErro(mensagem).",
 answer:`async iniciar() {
   try {
     const estados = await this.modelo.listar();
@@ -4922,7 +4922,7 @@ keywords:["preventDefault()","querySelector('#nome')","this.apresentador.cadastr
 exp:"A Visão captura o submit (com preventDefault), coleta os valores do DOM e repassa ao Apresentador — sem decidir nada sobre o cadastro."},
 
 {topic:"MVC/MVP",diff:"medium",type:"code",
-text:"Escreva o método async cadastrar(dados) do APRESENTADOR: usa o Modelo (await) e pede à Visão mostrar sucesso ou erro.",
+text:"Escreva o método async cadastrar(dados) do APRESENTADOR: faz await this.modelo.cadastrar(dados); em sucesso chama this.visao.mostrarSucesso(...); em erro (catch) chama this.visao.mostrarErro(...).",
 answer:`async cadastrar(dados) {
   try {
     await this.modelo.cadastrar(dados);

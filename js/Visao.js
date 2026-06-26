@@ -93,7 +93,7 @@ export class Visao {
   }
 
   atualizarPlacar() {
-    this.#id('ls-val').textContent = `${this.#quiz.acertos}/${this.#quiz.totalQuestoes}`;
+    this.#id('ls-val').textContent = `${this.#quiz.acertos}/${this.#quiz.totalContabilizado}`;
   }
 
   // ─────────────── Questão atual ───────────────
@@ -128,6 +128,7 @@ export class Visao {
     // Reinicia áreas de resposta.
     this.#id('feedback').className = 'feedback';
     this.#id('btn-next').className = 'btn-next';
+    this.#id('btn-skip').className = 'btn-skip';
     this.#id('options-list').style.display = 'none';
     this.#id('options-list').replaceChildren();
     this.#id('tf-list').style.display = 'none';
@@ -307,7 +308,18 @@ export class Visao {
     this.#id('fb-body').innerHTML = corpo;
     feedback.className = `feedback show ${acertou ? 'ok' : 'err'}`;
     this.#id('btn-next').className = 'btn-next show';
+    this.#id('btn-skip').className = 'btn-skip hide';
     this.atualizarPlacar();
+  }
+
+  /** Pula a questão atual (não conta na nota). Retorna false se já respondida. */
+  pularAtual() {
+    if (this.#respondida) return false;
+    this.#respondida = true;
+    this.#quiz.pular(this.#quiz.questaoAtual);
+    this.#id('btn-skip').className = 'btn-skip hide';
+    this.atualizarPlacar();
+    return true;
   }
 
   // ─────────────── Resultados ───────────────
@@ -319,7 +331,7 @@ export class Visao {
 
     const pct = q.percentual;
     this.#id('res-pct').textContent = pct + '%';
-    this.#id('res-frac').textContent = `${q.acertos} / ${q.totalQuestoes}`;
+    this.#id('res-frac').textContent = `${q.acertos} / ${q.totalContabilizado}`;
 
     const arco = this.#id('ring-arc');
     const circunferencia = 2 * Math.PI * 63;
@@ -344,10 +356,14 @@ export class Visao {
       .join('');
 
     const totalCodigo = q.contarHistoricoPorTipo('code');
-    const erros = q.totalQuestoes - q.acertos;
+    const erros = q.totalContabilizado - q.acertos;
+    const linhaPuladas = q.totalPuladas
+      ? `<div class="rt-row"><span class="rt-label">Puladas (não contam)</span><span class="rt-val y">${q.totalPuladas}</span></div>`
+      : '';
     this.#id('res-table').innerHTML = `
       <div class="rt-row"><span class="rt-label">Acertos</span><span class="rt-val g">${q.acertos}</span></div>
       <div class="rt-row"><span class="rt-label">Erros</span><span class="rt-val r">${erros}</span></div>
+      ${linhaPuladas}
       <div class="rt-row"><span class="rt-label">Questões de código</span><span class="rt-val" style="color:var(--purple)">${totalCodigo}</span></div>
       <div class="rt-row"><span class="rt-label">Aproveitamento</span><span class="rt-val ${pct >= 70 ? 'g' : pct >= 50 ? 'y' : 'r'}">${pct}%</span></div>`;
 
@@ -359,7 +375,8 @@ export class Visao {
     lista.replaceChildren();
     this.#quiz.historico.forEach((h, i) => {
       const item = document.createElement('div');
-      item.className = `rev-item ${h.correct ? 'ok' : 'err'}`;
+      const pulada = h.skipped;
+      item.className = `rev-item ${pulada ? 'skip' : h.correct ? 'ok' : 'err'}`;
       const rotuloDif = ROTULO_DIFICULDADE_ICONE[h.q.diff];
       const tagTipo = h.q.type === 'code' ? '<span class="tag tag-code" style="font-size:9px">✎ Código</span>' : '';
       let extra = '';
@@ -371,7 +388,7 @@ export class Visao {
       }
       item.innerHTML = `<div class="rev-q">${i + 1}. ${escaparHtml(h.q.text)}</div>
         <div class="rev-meta"><span class="tag tag-topic">${escaparHtml(h.q.topic)}</span><span class="tag tag-${h.q.diff}">${rotuloDif}</span>${tagTipo}
-          <span style="font-family:monospace;font-size:10px;color:${h.correct ? 'var(--green)' : 'var(--red)'}">${h.correct ? '✓ Correto' : '✗ Incorreto'}</span>
+          <span style="font-family:monospace;font-size:10px;color:${pulada ? 'var(--muted)' : h.correct ? 'var(--green)' : 'var(--red)'}">${pulada ? '↷ Pulada (não contou)' : h.correct ? '✓ Correto' : '✗ Incorreto'}</span>
         </div>
         <div class="rev-exp">${escaparHtml(h.q.exp)}</div>${extra}`;
       lista.append(item);

@@ -23,8 +23,12 @@ export class Quiz {
   get topicos() { return this.#topicos; }
   get questaoAtual() { return this.questoes[this.indiceAtual]; }
   get totalQuestoes() { return this.questoes.length; }
+  /** Questões que contam na nota: respondidas e NÃO puladas. */
+  get totalContabilizado() { return this.historico.filter((h) => !h.skipped).length; }
+  get totalPuladas() { return this.historico.filter((h) => h.skipped).length; }
   get percentual() {
-    return this.totalQuestoes ? Math.round((this.acertos / this.totalQuestoes) * 100) : 0;
+    const total = this.totalContabilizado;
+    return total ? Math.round((this.acertos / total) * 100) : 0;
   }
 
   // ─────────────── Seleção de filtros ───────────────
@@ -151,6 +155,11 @@ export class Quiz {
     this.historico.push({ q: questao, correct: correta, type: questao.type, ...extras });
   }
 
+  /** Marca a questão como pulada: entra no histórico, mas NÃO conta na nota. */
+  pular(questao) {
+    this.historico.push({ q: questao, correct: false, skipped: true, type: questao.type });
+  }
+
   /** Verifica uma resposta de código: retorna { correta, faltando[] }. */
   verificarCodigo(questao, textoUsuario) {
     const usuario = normalizar(textoUsuario);
@@ -169,8 +178,8 @@ export class Quiz {
   /** Desempenho agregado por dificuldade (somente as que apareceram). */
   desempenhoPorDificuldade() {
     return DIFICULDADES.map((d) => {
-      const total = this.historico.filter((h) => h.q.diff === d).length;
-      const acertos = this.historico.filter((h) => h.q.diff === d && h.correct).length;
+      const total = this.historico.filter((h) => h.q.diff === d && !h.skipped).length;
+      const acertos = this.historico.filter((h) => h.q.diff === d && !h.skipped && h.correct).length;
       return {
         dificuldade: d,
         total,
